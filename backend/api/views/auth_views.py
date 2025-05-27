@@ -44,7 +44,7 @@ class SpotifyApiAuthenticator:
             new_user = User(spotify_id=user_data['id'], nickname=user_data['display_name'])
             new_user.save()
 
-        res = HttpResponse(status=200)
+        res = redirect('/')
         expand_cookies(res.cookies, token_data)
 
         return res
