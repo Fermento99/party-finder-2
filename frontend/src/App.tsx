@@ -1,3 +1,3 @@
 export const App = () => {
-  return <h1>Hello PartFinder!</h1>;
+  return <h1>Hello PartyFinder!</h1>;
 };
