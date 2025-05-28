@@ -66,7 +66,12 @@ def _get_50_bands_details(band_ids, access_token):
 
 def _serialize_band(band_data):
     return {
-        'id': band_data['id'],
+        'spotify_id': band_data['id'],
+        'details': _serialize_details(band_data)
+    }
+
+def _serialize_details(band_data):
+    return {
         'name': band_data['name'],
         'followers': band_data['followers']['total'],
         'genres': ', '.join(band_data['genres']),
@@ -80,7 +85,7 @@ def _serialize_bands(response, single_band):
 
     out = []
     if single_band:
-        out = [response.json()]
+        out = [_serialize_details(response.json())]
     else:
         for band in response.json()['artists']:
             out.append(_serialize_band(band))
