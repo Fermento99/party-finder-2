@@ -6,7 +6,7 @@ from django.db.utils import IntegrityError
 from ..models import Band, Festival, BandEntry, Vote
 from ..serializers import BandSerializer
 from ..spotify_api.band import get_bands_details, get_band_by_name
-from ..spotify_api.user import get_current_user_details
+from ..spotify_api.user import get_current_user
 from ..utils import parse_request_body
 
 class BandListCreate(generics.ListCreateAPIView):
@@ -94,7 +94,7 @@ def add_list(request: HttpRequest):
 @require_http_methods(["DELETE", "POST"])
 def vote(request: HttpRequest, spotify_id):
     if request.method == 'POST':
-        user_id = get_current_user_details(request.COOKIES['access_token'])['id']
+        user_id = get_current_user(request.COOKIES['access_token'])['spotify_id']
         vote = parse_request_body(request).get('vote')
         if vote == None:
             return JsonResponse({'error': 'no vote provided', 'details': '"vote" should be one of these: {}'.format(get_possible_votes())}, status=400)
@@ -116,7 +116,7 @@ def vote(request: HttpRequest, spotify_id):
         except Exception:
             return JsonResponse({'error': 'something went wrong', 'details': 'unhandled error occured'}, status=500)
     else:
-        user_id = get_current_user_details(request.COOKIES['access_token'])['id']
+        user_id = get_current_user(request.COOKIES['access_token'])['spotify_id']
         try:
             Vote.objects.get(band_id=spotify_id, user_id=user_id).delete()
             return JsonResponse({ 

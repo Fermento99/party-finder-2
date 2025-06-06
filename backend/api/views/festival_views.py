@@ -4,7 +4,7 @@ from django.db.utils import IntegrityError
 from django.views.decorators.http import require_http_methods
 from ..models import Festival, UserEntry, BandEntry
 from ..serializers import FestivalSerializer
-from ..spotify_api.user import get_current_user_details
+from ..spotify_api.user import get_current_user
 from ..utils import parse_request_body
 
 
@@ -22,7 +22,7 @@ class FestivalDetails(generics.RetrieveUpdateDestroyAPIView):
 @require_http_methods(["DELETE", "POST"])
 def create_user_entry(request: HttpRequest, festival_id):
     if request.method == 'POST':
-        user_id = get_current_user_details(request.COOKIES['access_token'])['id']
+        user_id = get_current_user(request.COOKIES['access_token'])['spotify_id']
         user_status = parse_request_body(request).get('user_status')
         if user_status == None:
             return JsonResponse({'error': 'no status provided', 'details': '"user_status" should be one of these: {}'.format(get_possible_statuses())}, status=400)
@@ -44,7 +44,7 @@ def create_user_entry(request: HttpRequest, festival_id):
         except Exception:
             return JsonResponse({'error': 'something went wrong', 'details': 'unhandled error occured'}, status=500)
     else:
-        user_id = get_current_user_details(request.COOKIES['access_token'])['id']
+        user_id = get_current_user(request.COOKIES['access_token'])['spotify_id']
         try:
             UserEntry.objects.get(festival_id=festival_id, user_id=user_id).delete()
             return JsonResponse({ 

@@ -2,7 +2,7 @@ from django.http import HttpRequest, HttpResponseNotAllowed, JsonResponse, HttpR
 from django.shortcuts import redirect
 from ..models import User
 from ..spotify_api.auth import get_login_link, get_access_token
-from ..spotify_api.user import get_current_user_details
+from ..spotify_api.user import get_current_user
 from ..utils import expand_cookies
 
 
@@ -39,18 +39,26 @@ class SpotifyApiAuthenticator:
         
         token_data = get_access_token(code=request.GET.get('code'))
 
-        user_data = get_current_user_details(access_token=token_data['access_token'])
-        if not User.objects.filter(spotify_id=user_data['id']).exists():
-            new_user = User(spotify_id=user_data['id'], nickname=user_data['display_name'])
+        user_data = get_current_user(access_token=token_data['access_token'])
+        if not User.objects.filter(spotify_id=user_data['spotify_id']).exists():
+            new_user = User(spotify_id=user_data['spotify_id'], nickname=user_data['display_name'])
             new_user.save()
 
-        res = redirect('/')
+        res = redirect('/home')
         expand_cookies(res.cookies, token_data)
 
         return res
 
 def user(request: HttpRequest):
-    user_details = get_current_user_details(access_token=request.COOKIES['access_token'])
-    user_details['nickname'] = User.objects.get(spotify_id=user_details['id']).nickname
+    user_data = get_current_user(access_token=request.COOKIES['access_token'])
+    user_data['nickname'] = User.objects.get(spotify_id=user_data['spotify_id']).nickname
     
-    return JsonResponse(user_details)
+    return JsonResponse(user_data)
+
+
+def logout(request: HttpRequest):
+    res = JsonResponse({ 'message': 'succesfully logged out' }, status=200)
+    res.delete_cookie('access_token')
+    res.delete_cookie('refresh_token')
+
+    return res

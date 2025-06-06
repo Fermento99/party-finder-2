@@ -7,7 +7,7 @@ AUTHORIZED_PATH_ROOT = '/api/'
 
 EXCLUDED_PATHS = [
     '/api/login',
-    '/api/spotify_callback'
+    '/api/spotify-callback'
 ]
 
 def auth_middleware(get_response):
