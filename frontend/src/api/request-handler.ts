@@ -21,10 +21,6 @@ const deleteHandler = async (url: string, data?: object) => {
 };
 
 const requestHandler = async ({ url, method, data }: RequestHandlerParams) => {
-  console.log({
-    data,
-    stringified: data !== undefined ? JSON.stringify(data) : undefined,
-  });
   const response = await fetch(`${API_PREFIX}/${url}`, {
     body: data !== undefined ? JSON.stringify(data) : undefined,
     method,

@@ -9,6 +9,7 @@ import { Festival, UserEntry, UserStatusValue } from 'api/models';
 import { DefaultBadge } from 'components/default-badge';
 import { UserAvatar } from 'components/user-avatar';
 import { useNavigate } from 'react-router';
+import { sortUsersByStatus } from 'utils/array-utils';
 
 interface FestivalItemProps {
   festival: Festival;
@@ -45,7 +46,7 @@ interface UserListProps {
 
 const UserList = ({ users }: UserListProps) => (
   <AvatarGroup max={3}>
-    {users.map((userEntry) => (
+    {users.toSorted(sortUsersByStatus).map((userEntry) => (
       <DefaultBadge
         color={getBadgeColor(userEntry.user_status)}
         tooltip={userEntry.user_status_display}

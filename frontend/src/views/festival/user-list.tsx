@@ -10,6 +10,7 @@ import {
 } from '@mui/material';
 import { UserEntry } from 'api/models';
 import { UserAvatar } from 'components/user-avatar';
+import { sortUsersByStatus } from 'utils/array-utils';
 
 interface UserListProps {
   users: UserEntry[];
@@ -20,7 +21,7 @@ export const UserList = ({ users }: UserListProps) => (
     <Typography variant='h2'>User List:</Typography>
     <List>
       <Divider />
-      {users.map((user) => (
+      {users.toSorted(sortUsersByStatus).map((user) => (
         <UserItem key={user.user_id} user_entry={user} />
       ))}
     </List>

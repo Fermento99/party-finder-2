@@ -16,6 +16,7 @@ import { useNavigate } from 'react-router';
 import { UserAvatar } from 'components/user-avatar';
 import { useState } from 'react';
 import { VoteModal } from 'components/vote-modal';
+import { filterPositiveVotes, sortVotes } from 'utils/array-utils';
 
 interface BandListPorps {
   bands: Band[];
@@ -112,8 +113,11 @@ interface VotersListProps {
 
 const VotesList = ({ votes }: VotersListProps) => (
   <AvatarGroup>
-    {votes.map((vote) => (
-      <UserAvatar spotify_id={vote.user_id} />
-    ))}
+    {votes
+      .filter(filterPositiveVotes)
+      .sort(sortVotes)
+      .map((vote) => (
+        <UserAvatar spotify_id={vote.user_id} />
+      ))}
   </AvatarGroup>
 );
