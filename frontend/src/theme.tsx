@@ -18,8 +18,8 @@ declare module '@mui/material/styles' {
   }
 }
 
-declare module '@mui/material/Badge' {
-  interface BadgePropsColorOverrides {
+declare module '@mui/material/Button' {
+  interface ButtonPropsColorOverrides {
     voteOneColor: true;
     voteTwoColor: true;
     voteThreeColor: true;
@@ -30,10 +30,10 @@ declare module '@mui/material/Badge' {
 
 export const theme = createTheme({
   palette: {
-    voteOneColor: { main: '#6a4c93' },
-    voteTwoColor: { main: '#1982c4' },
-    voteThreeColor: { main: '#8ac926' },
-    voteFourColor: { main: '#ffca3a' },
-    voteFiveColor: { main: '#ff595e' },
+    voteOneColor: { main: '#7453A2', light: '#A994C7' },
+    voteTwoColor: { main: '#1982c4', light: '#5DB4EA' },
+    voteThreeColor: { main: '#8ac926', light: '#B2E265' },
+    voteFourColor: { main: '#ffca3a', light: '#FFD970' },
+    voteFiveColor: { main: '#ff595e', light: '#FF7075' },
   },
 });

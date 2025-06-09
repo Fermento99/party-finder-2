@@ -1,21 +1,9 @@
-import {
-  Button,
-  Card,
-  CardActions,
-  CardContent,
-  Chip,
-  Modal,
-  Stack,
-  Table,
-  TableBody,
-  TableCell,
-  TableCellProps,
-  TableRow,
-  Typography,
-} from '@mui/material';
-import { voteOnBand } from 'api/band';
-import { Vote, VOTES_MAP, VoteValue } from 'api/models';
-import { useNavigate } from 'react-router';
+import { Card, CardActions, CardContent, Modal } from '@mui/material';
+import { Vote } from 'api/models';
+import { VoteList } from './vote-list';
+import { VoteActions } from './vote-actions';
+import { useSelector } from 'react-redux';
+import { selectCurrentUserDetails } from 'state/user-slice/selectors';
 
 const CardStyle = {
   position: 'absolute',
@@ -28,117 +16,36 @@ const CardStyle = {
 
 interface VoteModalProps {
   votes?: Vote[];
-  bandId?: string;
+  band_id?: string;
   open: boolean;
   onClose: () => void;
 }
 
-export const VoteModal = ({ votes, bandId, open, onClose }: VoteModalProps) => {
-  if (!bandId || !votes) return null;
+export const VoteModal = ({
+  votes,
+  band_id,
+  open,
+  onClose,
+}: VoteModalProps) => {
+  const { data, loading } = useSelector(selectCurrentUserDetails);
+
+  let userVote = undefined;
+  if (loading === 'successful') {
+    userVote = votes?.find(({ user_id }) => user_id === data?.spotify_id)?.vote;
+  }
+
+  if (!band_id || !votes) return null;
 
   return (
     <Modal open={open} onClose={onClose}>
       <Card sx={CardStyle}>
         <CardContent>
-          <VoteContent votes={votes} />
+          <VoteList band_id={band_id} />
         </CardContent>
         <CardActions>
-          <VoteActions bandId={bandId} />
+          <VoteActions band_id={band_id} userVote={userVote} />
         </CardActions>
       </Card>
     </Modal>
   );
 };
-
-interface VoteContentProps {
-  votes: Vote[];
-}
-
-const VoteContent = ({ votes }: VoteContentProps) => {
-  const data = votes.reduce<Record<VoteValue, UserChipProps[]>>(
-    (acc, next) => {
-      acc[next.vote].push({
-        userId: next.user_id,
-        nickname: next.user_nickname,
-      });
-      return acc;
-    },
-    { '1': [], '2': [], '3': [], '4': [], '5': [] }
-  );
-
-  return (
-    <Table
-      sx={(theme) => ({
-        borderStyle: 'solid',
-        borderWidth: 1,
-        borderColor: theme.palette.divider,
-      })}
-    >
-      <TableBody>
-        {Object.entries(data).map(([key, value]) => (
-          <TableRow>
-            <Cell>
-              <Typography>{VOTES_MAP[key as VoteValue]}</Typography>
-            </Cell>
-            <Cell>
-              <Stack useFlexGap direction='row' flexWrap='wrap' spacing={1}>
-                {value.map((voter) => (
-                  <UserChip {...voter} />
-                ))}
-              </Stack>
-            </Cell>
-          </TableRow>
-        ))}
-      </TableBody>
-    </Table>
-  );
-};
-
-interface UserChipProps {
-  userId: string;
-  nickname: string;
-}
-
-const UserChip = ({ userId, nickname }: UserChipProps) => {
-  const navigate = useNavigate();
-
-  return (
-    <Chip
-      size='small'
-      onClick={() => navigate(`/user/${userId}`)}
-      label={nickname}
-    />
-  );
-};
-
-const Cell = (props: TableCellProps) => (
-  <TableCell
-    {...props}
-    sx={(theme) => ({
-      '&:not(:first-child)': {
-        borderLeftStyle: 'solid',
-        borderLeftWidth: 1,
-        borderLeftColor: theme.palette.divider,
-        width: '50%',
-      },
-    })}
-  />
-);
-
-interface VoteActionsProps {
-  bandId: string;
-}
-
-const VoteActions = ({ bandId }: VoteActionsProps) => (
-  <Stack direction='row' spacing={1}>
-    {Object.entries(VOTES_MAP).map(([key, value]) => (
-      <Button
-        variant='outlined'
-        key={key}
-        onClick={() => voteOnBand(bandId, key as VoteValue)}
-      >
-        {value}
-      </Button>
-    ))}
-  </Stack>
-);

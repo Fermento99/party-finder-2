@@ -64,3 +64,11 @@ export const selectCurrentUserDetails = createSelector(
     return { data: null, loading: state.isUserLoggingIn, error: null };
   }
 );
+
+export const selectCurrentUserIdAndNickname = createSelector(
+  selectCurrentUserDetails,
+  ({ data }) => ({
+    nickname: data!.nickname,
+    spotify_id: data!.spotify_id,
+  })
+);

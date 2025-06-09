@@ -44,3 +44,16 @@ export const festivalDetailsDataSelector = createSelector(
     return { data: null, loading: state.loadingDetails, error: null };
   }
 );
+
+export const selectBandVotes = (band_id: string) =>
+  createSelector(
+    festivalDetailsDataSelector,
+    (state) =>
+      state.data?.bands.find(({ spotify_id }) => spotify_id === band_id)?.votes
+  );
+
+export const selectUsersBandVote = (band_id: string, user_id: string) =>
+  createSelector(
+    selectBandVotes(band_id),
+    (state) => state?.filter((vote) => vote.user_id === user_id)[0]?.vote
+  );

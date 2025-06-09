@@ -1,6 +1,6 @@
 const API_PREFIX = process.env['REACT_APP_API_URL'];
 
-type Method = 'POST' | 'GET';
+type Method = 'POST' | 'GET' | 'DELETE';
 
 interface RequestHandlerParams {
   url: string;
@@ -16,13 +16,21 @@ const getHandler = async (url: string) => {
   return requestHandler({ url, method: 'GET' });
 };
 
+const deleteHandler = async (url: string, data?: object) => {
+  return requestHandler({ url, data, method: 'DELETE' });
+};
+
 const requestHandler = async ({ url, method, data }: RequestHandlerParams) => {
+  console.log({
+    data,
+    stringified: data !== undefined ? JSON.stringify(data) : undefined,
+  });
   const response = await fetch(`${API_PREFIX}/${url}`, {
-    body: method === 'GET' ? undefined : JSON.stringify(data),
+    body: data !== undefined ? JSON.stringify(data) : undefined,
     method,
   });
 
   return await response.json();
 };
 
-export { postHandler, getHandler };
+export { postHandler, getHandler, deleteHandler };

@@ -52,7 +52,7 @@ export const BandList = ({ bands }: BandListPorps) => {
       </List>
       <VoteModal
         votes={selectedBand?.votes}
-        bandId={selectedBand?.bandId}
+        band_id={selectedBand?.bandId}
         open={isVoteModalVisible}
         onClose={() => setVoteModalVisible(false)}
       />
