@@ -7,15 +7,15 @@ export const VOTES_MAP = {
 };
 
 export const USER_STATUSES_MAP = {
-  C: 'Considering',
   G: 'Going',
+  C: 'Considering',
 };
 
 export type VoteValue = keyof typeof VOTES_MAP;
 export type UserStatusValue = keyof typeof USER_STATUSES_MAP;
 
 export interface Festival {
-  id: number;
+  id: string;
   name: string;
   start_date: string;
   end_date: string;
@@ -26,7 +26,7 @@ export interface Festival {
 export type FestivalDetails = Festival & { bands: Band[] };
 
 export interface UserEntry {
-  festival_id: number;
+  festival_id: string;
   user_id: string;
   user_nickname: string;
   user_status: UserStatusValue;

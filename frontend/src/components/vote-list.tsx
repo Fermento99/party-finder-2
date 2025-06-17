@@ -7,19 +7,18 @@ import {
   TableCellProps,
   TableRow,
   Typography,
-  useTheme,
 } from '@mui/material';
 import { VOTES_MAP, VoteValue } from 'api/models';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router';
-import { selectBandVotes } from 'state/festival-slice/selectors';
+import { selectBandVotes } from 'state/festival-details/selectors';
+import { getVoteColor } from 'utils/color-getters';
 
 interface VoteListProps {
   band_id: string;
 }
 
 export const VoteList = ({ band_id }: VoteListProps) => {
-  const theme = useTheme();
   const votes = useSelector(selectBandVotes(band_id));
 
   const data = votes?.reduce<Record<VoteValue, UserChipProps[]>>(
@@ -33,21 +32,6 @@ export const VoteList = ({ band_id }: VoteListProps) => {
     { '1': [], '2': [], '3': [], '4': [], '5': [] }
   );
 
-  const getRowBackgroundColor = (vote: VoteValue) => {
-    switch (vote) {
-      case '1':
-        return theme.palette.voteOneColor.light;
-      case '2':
-        return theme.palette.voteTwoColor.light;
-      case '3':
-        return theme.palette.voteThreeColor.light;
-      case '4':
-        return theme.palette.voteFourColor.light;
-      case '5':
-        return theme.palette.voteFiveColor.light;
-    }
-  };
-
   return (
     <Table
       sx={(theme) => ({
@@ -59,9 +43,10 @@ export const VoteList = ({ band_id }: VoteListProps) => {
       <TableBody>
         {Object.entries(data ?? []).map(([key, value]) => (
           <TableRow
-            sx={{
-              backgroundColor: getRowBackgroundColor(key as VoteValue),
-            }}
+            sx={(theme) => ({
+              backgroundColor:
+                theme.palette[getVoteColor(key as VoteValue)].main,
+            })}
           >
             <Cell>
               <Typography>{VOTES_MAP[key as VoteValue]}</Typography>

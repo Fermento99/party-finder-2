@@ -1,4 +1,5 @@
 import {
+  Button,
   Divider,
   List,
   ListItem,
@@ -6,11 +7,21 @@ import {
   ListItemText,
   Stack,
   Typography,
-  useTheme,
 } from '@mui/material';
-import { UserEntry } from 'api/models';
+import { USER_STATUSES_MAP, UserEntry, UserStatusValue } from 'api/models';
 import { UserAvatar } from 'components/user-avatar';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  actionFollowFestival,
+  actionUnfollowFestival,
+} from 'state/festival-details/actions';
+import {
+  selectFestivalDetails,
+  selectUserFollowStatus,
+} from 'state/festival-details/selectors';
+import { selectCurrentUserIdAndNickname } from 'state/user-slice/selectors';
 import { sortUsersByStatus } from 'utils/array-utils';
+import { getStatusColor } from 'utils/color-getters';
 
 interface UserListProps {
   users: UserEntry[];
@@ -25,6 +36,7 @@ export const UserList = ({ users }: UserListProps) => (
         <UserItem key={user.user_id} user_entry={user} />
       ))}
     </List>
+    <FollowActions />
   </Stack>
 );
 
@@ -34,28 +46,69 @@ interface UserItemProps {
 
 const UserItem = ({
   user_entry: { user_nickname, user_status_display, user_status, user_id },
-}: UserItemProps) => {
-  const theme = useTheme();
+}: UserItemProps) => (
+  <>
+    <ListItem
+      sx={(theme) => ({
+        backgroundColor: theme.palette[getStatusColor(user_status)].main,
+      })}
+    >
+      <ListItemAvatar>
+        <UserAvatar spotify_id={user_id} />
+      </ListItemAvatar>
+      <ListItemText primary={user_nickname} secondary={user_status_display} />
+    </ListItem>
+    <Divider />
+  </>
+);
 
-  let bgColor: string;
-  switch (user_status) {
-    case 'C':
-      bgColor = theme.palette.warning.main;
-      break;
-    case 'G':
-      bgColor = theme.palette.success.main;
-      break;
-  }
+const FollowActions = () => {
+  const dispatch = useDispatch();
+  const { nickname, spotify_id } = useSelector(selectCurrentUserIdAndNickname);
+  const festivalDetails = useSelector(selectFestivalDetails);
+  const userFollowStatus = useSelector(selectUserFollowStatus(spotify_id!));
 
   return (
-    <>
-      <ListItem sx={{ backgroundColor: bgColor }}>
-        <ListItemAvatar>
-          <UserAvatar spotify_id={user_id} />
-        </ListItemAvatar>
-        <ListItemText primary={user_nickname} secondary={user_status_display} />
-      </ListItem>
-      <Divider />
-    </>
+    <Stack direction='row' spacing={1}>
+      {Object.entries(USER_STATUSES_MAP).map(([key, value]) => (
+        <Button
+          color={getStatusColor(key as UserStatusValue)}
+          variant={
+            userFollowStatus?.user_status === key ? 'contained' : 'outlined'
+          }
+          onClick={() =>
+            dispatch(
+              actionFollowFestival({
+                festival_id: festivalDetails!.id,
+                user_id: spotify_id!,
+                user_nickname: nickname!,
+                user_status: key as UserStatusValue,
+                user_status_display: value,
+              })
+            )
+          }
+        >
+          {value}
+        </Button>
+      ))}
+      <Button
+        color='error'
+        variant='outlined'
+        disabled={userFollowStatus === undefined}
+        onClick={() =>
+          dispatch(
+            actionUnfollowFestival({
+              festival_id: festivalDetails!.id,
+              user_id: spotify_id!,
+              user_nickname: nickname!,
+              user_status: 'G',
+              user_status_display: USER_STATUSES_MAP['G'],
+            })
+          )
+        }
+      >
+        Unfollow festival
+      </Button>
+    </Stack>
   );
 };

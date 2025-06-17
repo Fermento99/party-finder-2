@@ -5,11 +5,12 @@ import {
   Stack,
   Typography,
 } from '@mui/material';
-import { Festival, UserEntry, UserStatusValue } from 'api/models';
+import { Festival, UserEntry } from 'api/models';
 import { DefaultBadge } from 'components/default-badge';
 import { UserAvatar } from 'components/user-avatar';
 import { useNavigate } from 'react-router';
 import { sortUsersByStatus } from 'utils/array-utils';
+import { getStatusColor } from 'utils/color-getters';
 
 interface FestivalItemProps {
   festival: Festival;
@@ -48,7 +49,7 @@ const UserList = ({ users }: UserListProps) => (
   <AvatarGroup max={3}>
     {users.toSorted(sortUsersByStatus).map((userEntry) => (
       <DefaultBadge
-        color={getBadgeColor(userEntry.user_status)}
+        color={getStatusColor(userEntry.user_status)}
         tooltip={userEntry.user_status_display}
       >
         <UserAvatar spotify_id={userEntry.user_id} />
@@ -56,12 +57,3 @@ const UserList = ({ users }: UserListProps) => (
     ))}
   </AvatarGroup>
 );
-
-const getBadgeColor = (userStatus: UserStatusValue) => {
-  switch (userStatus) {
-    case 'C':
-      return 'warning';
-    case 'G':
-      return 'success';
-  }
-};

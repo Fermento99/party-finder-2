@@ -10,7 +10,7 @@ import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router';
 import { actionFetchCurrentUser } from 'state/user-slice/actions';
-import { selectCurrentUserDetails } from 'state/user-slice/selectors';
+import { selectCurrentUserLoadingStatus } from 'state/user-slice/selectors';
 
 const CardStyle = {
   position: 'absolute',
@@ -23,15 +23,15 @@ const CardStyle = {
 export const LoginView = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { loading } = useSelector(selectCurrentUserDetails);
+  const loadingStatus = useSelector(selectCurrentUserLoadingStatus);
 
   useEffect(() => {
     dispatch(actionFetchCurrentUser());
   }, [dispatch]);
 
   useEffect(() => {
-    if (loading === 'successful') navigate('/home');
-  }, [loading, navigate]);
+    if (loadingStatus === 'successful') navigate('/home');
+  }, [loadingStatus, navigate]);
 
   return (
     <Card sx={CardStyle}>

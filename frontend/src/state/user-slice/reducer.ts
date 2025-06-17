@@ -19,9 +19,9 @@ interface UserState {
 
 const initialUserState: UserState = {
   users: [],
-  loading: 'idle',
+  loading: 'initial',
   loggedUser: null,
-  isUserLoggingIn: 'idle',
+  isUserLoggingIn: 'initial',
 };
 
 export const userReducer = createReducer(initialUserState, (builder) =>

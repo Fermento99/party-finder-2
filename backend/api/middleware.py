@@ -1,4 +1,4 @@
-from django.http import HttpRequest, HttpResponse
+from django.http import HttpRequest, JsonResponse
 from .spotify_api.auth import get_access_token
 from .utils import expand_cookies
 
@@ -15,7 +15,7 @@ def auth_middleware(get_response):
         if request.path.startswith(AUTHORIZED_PATH_ROOT) and True not in [request.path.startswith(path) for path in EXCLUDED_PATHS]:
             access_token = request.COOKIES.get('access_token')
             refresh_token = request.COOKIES.get('refresh_token')
-            response: HttpResponse | None = None
+            response: JsonResponse | None = None
 
             if access_token != None:
                 response = get_response(request)
@@ -25,7 +25,7 @@ def auth_middleware(get_response):
                 response = get_response(request)
                 expand_cookies(response.cookies, token_data)
             else:
-                return HttpResponse('401 Unauthorized', status=401)
+                return JsonResponse({ 'message': '401 Unauthorized'}, status=401)
 
             return response
         else:

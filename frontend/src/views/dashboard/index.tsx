@@ -1,12 +1,16 @@
 import { Divider, List, Stack, Typography } from '@mui/material';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { actionFetchFestivalList } from 'state/festival-slice/actions';
-import { festivalListDataSelector } from 'state/festival-slice/selectors';
+import { actionFetchFestivalList } from 'state/festival-list/actions';
+import {
+  selectFestivalList,
+  selectFestivalListLoadingStatus,
+} from 'state/festival-list/selectors';
 import { FestivalItem } from './festival-item';
 
 export const DashboardView = () => {
-  const festivalListData = useSelector(festivalListDataSelector);
+  const festivalList = useSelector(selectFestivalList);
+  const loadingStatus = useSelector(selectFestivalListLoadingStatus);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -18,8 +22,8 @@ export const DashboardView = () => {
       <Typography>Festival List:</Typography>
       <List>
         <Divider />
-        {festivalListData.loading === 'successful' &&
-          festivalListData.data?.map((festival) => (
+        {loadingStatus === 'successful' &&
+          festivalList?.map((festival) => (
             <>
               <FestivalItem key={festival.id} festival={festival} />
               <Divider />

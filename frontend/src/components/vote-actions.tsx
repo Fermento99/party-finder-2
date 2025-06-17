@@ -1,9 +1,10 @@
 import { Button, Stack } from '@mui/material';
 import { VOTES_MAP, VoteValue } from 'api/models';
 import { useDispatch, useSelector } from 'react-redux';
-import { actionUnvote, actionVote } from 'state/festival-slice/actions';
-import { selectUsersBandVote } from 'state/festival-slice/selectors';
+import { actionUnvote, actionVote } from 'state/festival-details/actions';
+import { selectUsersBandVote } from 'state/festival-details/selectors';
 import { selectCurrentUserIdAndNickname } from 'state/user-slice/selectors';
+import { getVoteColor } from 'utils/color-getters';
 
 interface VoteActionsProps {
   band_id: string;
@@ -12,23 +13,8 @@ interface VoteActionsProps {
 
 export const VoteActions = ({ band_id }: VoteActionsProps) => {
   const dispatch = useDispatch();
-  const user = useSelector(selectCurrentUserIdAndNickname);
-  const userVote = useSelector(selectUsersBandVote(band_id, user.spotify_id));
-
-  const getButtonColor = (vote: VoteValue) => {
-    switch (vote) {
-      case '1':
-        return 'voteOneColor';
-      case '2':
-        return 'voteTwoColor';
-      case '3':
-        return 'voteThreeColor';
-      case '4':
-        return 'voteFourColor';
-      case '5':
-        return 'voteFiveColor';
-    }
-  };
+  const { spotify_id, nickname } = useSelector(selectCurrentUserIdAndNickname);
+  const userVote = useSelector(selectUsersBandVote(band_id, spotify_id!));
 
   return (
     <Stack direction='row' spacing={1}>
@@ -41,7 +27,7 @@ export const VoteActions = ({ band_id }: VoteActionsProps) => {
               ? 'contained'
               : 'outlined'
           }
-          color={getButtonColor(key as VoteValue)}
+          color={getVoteColor(key as VoteValue)}
           key={key}
           onClick={() =>
             dispatch(
@@ -49,8 +35,8 @@ export const VoteActions = ({ band_id }: VoteActionsProps) => {
                 band_id,
                 vote: key as VoteValue,
                 vote_display: VOTES_MAP[key as VoteValue],
-                user_id: user.spotify_id,
-                user_nickname: user.nickname,
+                user_id: spotify_id!,
+                user_nickname: nickname!,
               })
             )
           }
@@ -68,8 +54,8 @@ export const VoteActions = ({ band_id }: VoteActionsProps) => {
               band_id,
               vote: userVote!,
               vote_display: VOTES_MAP[userVote!],
-              user_id: user.spotify_id,
-              user_nickname: user.nickname,
+              user_id: spotify_id!,
+              user_nickname: nickname!,
             })
           )
         }

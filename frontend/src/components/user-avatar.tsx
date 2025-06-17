@@ -12,22 +12,22 @@ interface UserAvatarProps {
 export const UserAvatar = ({ spotify_id, tooltip = true }: UserAvatarProps) => {
   const navigate = useNavigate();
 
-  const { data } = useSelector(selectUserDetails(spotify_id));
+  const user = useSelector(selectUserDetails(spotify_id));
 
   let src = spotify_id;
-  if (data) {
-    const image = data.details.images.find(({ height }) => height === 64)?.url;
+  if (user) {
+    const image = user?.details.images.find(({ height }) => height === 64)?.url;
     if (image) {
       src = image;
     } else {
-      src = data.nickname;
+      src = user.nickname;
     }
   }
 
   return (
-    <DefaultTooltip title={tooltip ? data?.nickname ?? spotify_id : ''}>
+    <DefaultTooltip title={tooltip ? user?.nickname ?? spotify_id : ''}>
       <Avatar
-        alt={data?.nickname}
+        alt={user?.nickname}
         src={src}
         onClick={(event) => {
           event.stopPropagation();

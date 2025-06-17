@@ -8,12 +8,16 @@ import {
   actionFetchUserList,
   actionUserLogout,
 } from 'state/user-slice/actions';
-import { selectCurrentUserDetails } from 'state/user-slice/selectors';
+import {
+  selectCurrentUserDetails,
+  selectCurrentUserLoadingStatus,
+} from 'state/user-slice/selectors';
 
 export const HomeLayout = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { data, loading } = useSelector(selectCurrentUserDetails);
+  const currentUser = useSelector(selectCurrentUserDetails);
+  const loadingStatus = useSelector(selectCurrentUserLoadingStatus);
 
   useEffect(() => {
     dispatch(actionFetchCurrentUser());
@@ -21,15 +25,15 @@ export const HomeLayout = () => {
   }, [dispatch]);
 
   useEffect(() => {
-    if (loading === 'failed') navigate('/login');
-  }, [loading, navigate]);
+    if (loadingStatus === 'failed') navigate('/login');
+  }, [loadingStatus, navigate]);
 
   return (
     <>
       <AppBar sx={{ px: 2, py: 1 }}>
         <Stack direction='row' spacing={1} alignItems='center'>
-          <UserAvatar spotify_id={data?.spotify_id} tooltip={false} />
-          <Typography>{data?.nickname}</Typography>
+          <UserAvatar spotify_id={currentUser?.spotify_id} tooltip={false} />
+          <Typography>{currentUser?.nickname}</Typography>
           <Button
             color='secondary'
             onClick={() => dispatch(actionUserLogout())}

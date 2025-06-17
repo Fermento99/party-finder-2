@@ -27,11 +27,13 @@ export const VoteModal = ({
   open,
   onClose,
 }: VoteModalProps) => {
-  const { data, loading } = useSelector(selectCurrentUserDetails);
+  const currentUser = useSelector(selectCurrentUserDetails);
 
   let userVote = undefined;
-  if (loading === 'successful') {
-    userVote = votes?.find(({ user_id }) => user_id === data?.spotify_id)?.vote;
+  if (currentUser) {
+    userVote = votes?.find(
+      ({ user_id }) => user_id === currentUser?.spotify_id
+    )?.vote;
   }
 
   if (!band_id || !votes) return null;

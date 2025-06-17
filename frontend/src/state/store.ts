@@ -1,11 +1,14 @@
 import { combineReducers, configureStore } from '@reduxjs/toolkit';
-import { festivalReducer } from './festival-slice/reducer';
-import { festivalMiddleware } from './festival-slice/middleware';
 import { userReducer } from './user-slice/reducer';
 import { userMiddleware } from './user-slice/middleware';
+import { festivalListReducer } from './festival-list/reducer';
+import { festivalDetailsReducer } from './festival-details/reducer';
+import { festivalDatailsMiddleware } from './festival-details/middleware';
+import { festivalListMiddleware } from './festival-list/middleware';
 
 const rootReducer = combineReducers({
-  festival: festivalReducer,
+  festivalList: festivalListReducer,
+  fetsivalDetails: festivalDetailsReducer,
   user: userReducer,
 });
 
@@ -13,7 +16,8 @@ export const store = configureStore({
   reducer: rootReducer,
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware()
-      .concat(festivalMiddleware.middleware)
+      .concat(festivalListMiddleware.middleware)
+      .concat(festivalDatailsMiddleware.middleware)
       .concat(userMiddleware.middleware),
 });
 
