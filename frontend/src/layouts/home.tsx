@@ -1,6 +1,15 @@
-import { AppBar, Box, Button, Stack, Typography } from '@mui/material';
+import {
+  AppBar,
+  Box,
+  Divider,
+  IconButton,
+  Menu,
+  MenuItem,
+  Stack,
+} from '@mui/material';
+import HomeFilledIcon from '@mui/icons-material/HomeFilled';
 import { UserAvatar } from 'components/user-avatar';
-import { useEffect } from 'react';
+import { useEffect, useState, MouseEvent } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Outlet, useNavigate } from 'react-router';
 import {
@@ -14,6 +23,8 @@ import {
 } from 'state/user-slice/selectors';
 
 export const HomeLayout = () => {
+  const [isOpen, setOpen] = useState(false);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const currentUser = useSelector(selectCurrentUserDetails);
@@ -28,20 +39,48 @@ export const HomeLayout = () => {
     if (loadingStatus === 'failed') navigate('/login');
   }, [loadingStatus, navigate]);
 
+  const openMenu = (event: MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+    setOpen(true);
+  };
+
+  const closeMenu = () => {
+    setAnchorEl(null);
+    setOpen(false);
+  };
+
   return (
     <>
       <AppBar sx={{ px: 2, py: 1 }}>
-        <Stack direction='row' spacing={1} alignItems='center'>
-          <UserAvatar spotify_id={currentUser?.spotify_id} tooltip={false} />
-          <Typography>{currentUser?.nickname}</Typography>
-          <Button
-            color='secondary'
-            onClick={() => dispatch(actionUserLogout())}
-          >
-            Logout
-          </Button>
+        <Stack
+          direction='row'
+          alignItems='center'
+          justifyContent='space-between'
+        >
+          <Stack direction='row'>
+            <IconButton onClick={() => navigate('/home')}>
+              <HomeFilledIcon />
+            </IconButton>
+          </Stack>
+          <UserAvatar
+            spotify_id={currentUser?.spotify_id}
+            tooltip={false}
+            onClick={(e) => openMenu(e as MouseEvent<HTMLElement>)}
+          />
         </Stack>
       </AppBar>
+      <Menu open={isOpen} anchorEl={anchorEl} onClose={closeMenu}>
+        <MenuItem disabled>
+          {currentUser?.nickname} ({currentUser?.details.display_name})
+        </MenuItem>
+        <Divider />
+        <MenuItem
+          onClick={() => navigate(`/home/user/${currentUser?.spotify_id}`)}
+        >
+          Profile
+        </MenuItem>
+        <MenuItem onClick={() => dispatch(actionUserLogout())}>Logout</MenuItem>
+      </Menu>
       <Box sx={{ height: 56 }} />
       <Outlet />
     </>

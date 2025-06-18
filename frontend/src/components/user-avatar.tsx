@@ -3,13 +3,19 @@ import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router';
 import { selectUserDetails } from 'state/user-slice/selectors';
 import { DefaultTooltip } from './default-tooltip';
+import { MouseEvent } from 'react';
 
 interface UserAvatarProps {
   spotify_id?: string;
   tooltip?: boolean;
+  onClick?: (event: MouseEvent) => void;
 }
 
-export const UserAvatar = ({ spotify_id, tooltip = true }: UserAvatarProps) => {
+export const UserAvatar = ({
+  spotify_id,
+  tooltip = true,
+  onClick,
+}: UserAvatarProps) => {
   const navigate = useNavigate();
 
   const user = useSelector(selectUserDetails(spotify_id));
@@ -29,10 +35,14 @@ export const UserAvatar = ({ spotify_id, tooltip = true }: UserAvatarProps) => {
       <Avatar
         alt={user?.nickname}
         src={src}
-        onClick={(event) => {
-          event.stopPropagation();
-          navigate(`/home/user/${spotify_id}`);
-        }}
+        onClick={
+          onClick
+            ? onClick
+            : (event) => {
+                event.stopPropagation();
+                navigate(`/home/user/${spotify_id}`);
+              }
+        }
       />
     </DefaultTooltip>
   );
