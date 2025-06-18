@@ -48,7 +48,7 @@ export const theme = createTheme({
     voteThreeColor: { main: '#8ac926' },
     voteFourColor: { main: '#ffca3a' },
     voteFiveColor: { main: '#ff595e' },
-    followGoingColor: { main: '#c72cdb' },
+    followGoingColor: { main: '#cc5adb' },
     followConsideringColor: { main: '#dba72c' },
   },
 

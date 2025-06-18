@@ -7,6 +7,7 @@ import {
   selectFestivalListLoadingStatus,
 } from 'state/festival-list/selectors';
 import { FestivalItem } from './festival-item';
+import { LoadingHandler } from 'components/loading-handler';
 
 export const DashboardView = () => {
   const festivalList = useSelector(selectFestivalList);
@@ -18,17 +19,18 @@ export const DashboardView = () => {
   }, [dispatch]);
 
   return (
-    <Stack>
-      <List>
-        <Divider />
-        {loadingStatus === 'successful' &&
-          festivalList?.map((festival) => (
+    <LoadingHandler loading={loadingStatus}>
+      <Stack>
+        <List>
+          <Divider />
+          {festivalList?.map((festival) => (
             <>
               <FestivalItem key={festival.id} festival={festival} />
               <Divider />
             </>
           ))}
-      </List>
-    </Stack>
+        </List>
+      </Stack>
+    </LoadingHandler>
   );
 };

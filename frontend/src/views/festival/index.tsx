@@ -9,6 +9,7 @@ import {
 import { actionFetchFestivalDetails } from 'state/festival-details/actions';
 import { UserList } from './user-list';
 import { BandList } from './band-list';
+import { LoadingHandler } from 'components/loading-handler';
 
 type FestivalViewURLProps = {
   id: string;
@@ -25,22 +26,20 @@ export const FestivalView = () => {
   }, [id, dispatch]);
 
   return (
-    <Stack>
-      {loadingStatus === 'successful' && (
-        <Stack>
-          <Box>
-            <Typography variant='h1'>{festivalDetails!.name}</Typography>
-            <Typography color='secondary' variant='body2'>
-              {festivalDetails!.start_date} - {festivalDetails!.end_date}
-            </Typography>
-            <Typography color='secondary' variant='body2'>
-              {festivalDetails!.place}
-            </Typography>
-          </Box>
-          <UserList users={festivalDetails!.users} />
-          <BandList bands={festivalDetails!.bands} />
-        </Stack>
-      )}
-    </Stack>
+    <LoadingHandler loading={loadingStatus}>
+      <Stack>
+        <Box>
+          <Typography variant='h1'>{festivalDetails?.name}</Typography>
+          <Typography color='secondary' variant='body2'>
+            {festivalDetails?.start_date} - {festivalDetails?.end_date}
+          </Typography>
+          <Typography color='secondary' variant='body2'>
+            {festivalDetails?.place}
+          </Typography>
+        </Box>
+        <UserList users={festivalDetails?.users ?? []} />
+        <BandList bands={festivalDetails?.bands ?? []} />
+      </Stack>
+    </LoadingHandler>
   );
 };
