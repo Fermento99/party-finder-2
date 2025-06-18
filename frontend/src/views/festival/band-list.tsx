@@ -16,7 +16,11 @@ import { useNavigate } from 'react-router';
 import { UserAvatar } from 'components/user-avatar';
 import { useState } from 'react';
 import { VoteModal } from 'components/vote-modal';
-import { filterPositiveVotes, sortVotes } from 'utils/array-utils';
+import { filterRelevantVotes, sortVotes } from 'utils/array-utils';
+import { useSelector } from 'react-redux';
+import { selectRelevantUsers } from 'state/festival-details/selectors';
+import { DefaultBadge } from 'components/default-badge';
+import { getVoteColor } from 'utils/color-getters';
 
 interface BandListPorps {
   bands: Band[];
@@ -74,7 +78,10 @@ const BandItem = ({ band, onSelect }: BandItemProps) => {
   return (
     <>
       <ListItem sx={{ justifyContent: 'space-between' }}>
-        <Stack direction='row' sx={{ maxWidth: '50%', width: '50%' }}>
+        <Stack
+          direction='row'
+          sx={{ width: '70%', maxWidth: 'calc(100% - 190px)' }}
+        >
           <ListItemAvatar>
             <Avatar
               variant='square'
@@ -89,12 +96,15 @@ const BandItem = ({ band, onSelect }: BandItemProps) => {
           </ListItemAvatar>
           <ListItemText
             primary={band.details.name}
+            slotProps={{ primary: { variant: 'h3' } }}
             secondary={
               <Stack>
-                <Typography>
+                <Typography variant='body2'>
                   {formatFolowersNumber(band.details.followers)} followers
                 </Typography>
-                <Typography>genres: {band.details.genres}</Typography>
+                <Typography variant='body2'>
+                  genres: {band.details.genres}
+                </Typography>
               </Stack>
             }
           />
@@ -111,13 +121,25 @@ interface VotersListProps {
   votes: Vote[];
 }
 
-const VotesList = ({ votes }: VotersListProps) => (
-  <AvatarGroup>
-    {votes
-      .filter(filterPositiveVotes)
-      .sort(sortVotes)
-      .map((vote) => (
-        <UserAvatar spotify_id={vote.user_id} />
-      ))}
-  </AvatarGroup>
-);
+const VotesList = ({ votes }: VotersListProps) => {
+  const relevantUsers = useSelector(selectRelevantUsers);
+
+  return (
+    <Stack sx={{ width: 110, alignItems: 'center' }}>
+      <AvatarGroup max={3}>
+        {votes
+          .filter(filterRelevantVotes(relevantUsers))
+          .sort(sortVotes)
+          .map((vote) => (
+            <DefaultBadge
+              bgColor={getVoteColor(vote.vote)}
+              tooltip={vote.vote_display}
+              badgeContent={vote.vote}
+            >
+              <UserAvatar spotify_id={vote.user_id} />
+            </DefaultBadge>
+          ))}
+      </AvatarGroup>
+    </Stack>
+  );
+};

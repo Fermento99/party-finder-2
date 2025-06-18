@@ -1,8 +1,10 @@
-import { UserEntry, Vote } from 'api/models';
+import { USER_STATUSES_MAP, UserEntry, Vote } from 'api/models';
 
-const STATUS_ORDER = ['G', 'C'];
+const STATUS_ORDER = Object.keys(USER_STATUSES_MAP);
 
-export const filterPositiveVotes = (vote: Vote) => vote.vote !== '5';
+export const filterRelevantVotes = (userList?: string[]) => (vote: Vote) =>
+  vote.vote !== '5' &&
+  (userList === undefined || userList.includes(vote.user_id));
 
 export const sortVotes = (a: Vote, b: Vote) => a.vote.localeCompare(b.vote);
 

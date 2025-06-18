@@ -1,4 +1,4 @@
-import { Divider, List, Stack, Typography } from '@mui/material';
+import { Divider, List, Stack } from '@mui/material';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { actionFetchFestivalList } from 'state/festival-list/actions';
@@ -19,7 +19,6 @@ export const DashboardView = () => {
 
   return (
     <Stack>
-      <Typography>Festival List:</Typography>
       <List>
         <Divider />
         {loadingStatus === 'successful' &&

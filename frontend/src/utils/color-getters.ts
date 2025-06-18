@@ -17,9 +17,9 @@ export const getVoteColor = (vote: VoteValue) => {
 
 export const getStatusColor = (status: UserStatusValue) => {
   switch (status) {
-    case 'C':
-      return 'warning';
     case 'G':
-      return 'success';
+      return 'followGoingColor';
+    case 'C':
+      return 'followConsideringColor';
   }
 };

@@ -7,6 +7,8 @@ declare module '@mui/material/styles' {
     voteThreeColor: Palette['primary'];
     voteFourColor: Palette['primary'];
     voteFiveColor: Palette['primary'];
+    followGoingColor: Palette['primary'];
+    followConsideringColor: Palette['primary'];
   }
 
   interface PaletteOptions {
@@ -15,6 +17,8 @@ declare module '@mui/material/styles' {
     voteThreeColor?: PaletteOptions['primary'];
     voteFourColor?: PaletteOptions['primary'];
     voteFiveColor?: PaletteOptions['primary'];
+    followGoingColor?: PaletteOptions['primary'];
+    followConsideringColor?: PaletteOptions['primary'];
   }
 }
 
@@ -25,15 +29,50 @@ declare module '@mui/material/Button' {
     voteThreeColor: true;
     voteFourColor: true;
     voteFiveColor: true;
+    followGoingColor: true;
+    followConsideringColor: true;
   }
 }
 
 export const theme = createTheme({
   palette: {
-    voteOneColor: { main: '#7453A2', light: '#A994C7' },
-    voteTwoColor: { main: '#1982c4', light: '#5DB4EA' },
-    voteThreeColor: { main: '#8ac926', light: '#B2E265' },
-    voteFourColor: { main: '#ffca3a', light: '#FFD970' },
-    voteFiveColor: { main: '#ff595e', light: '#FF7075' },
+    mode: 'light',
+    primary: {
+      main: '#F77F00',
+    },
+    secondary: {
+      main: '#005D8F',
+    },
+    voteOneColor: { main: '#7453A2' },
+    voteTwoColor: { main: '#1982c4' },
+    voteThreeColor: { main: '#8ac926' },
+    voteFourColor: { main: '#ffca3a' },
+    voteFiveColor: { main: '#ff595e' },
+    followGoingColor: { main: '#c72cdb' },
+    followConsideringColor: { main: '#dba72c' },
+  },
+
+  typography: {
+    body2: {
+      fontFamily: 'Share Tech Mono',
+    },
+    h1: {
+      fontFamily: 'New Rocker',
+    },
+    h3: {
+      fontFamily: 'Alfa Slab One',
+    },
+  },
+
+  components: {
+    MuiButton: {
+      defaultProps: {},
+      styleOverrides: {
+        root: {
+          textTransform: 'none',
+          disableElevation: true,
+        },
+      },
+    },
   },
 });

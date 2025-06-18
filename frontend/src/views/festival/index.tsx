@@ -30,10 +30,12 @@ export const FestivalView = () => {
         <Stack>
           <Box>
             <Typography variant='h1'>{festivalDetails!.name}</Typography>
-            <Typography color='secondary'>
+            <Typography color='secondary' variant='body2'>
               {festivalDetails!.start_date} - {festivalDetails!.end_date}
             </Typography>
-            <Typography color='secondary'>{festivalDetails!.place}</Typography>
+            <Typography color='secondary' variant='body2'>
+              {festivalDetails!.place}
+            </Typography>
           </Box>
           <UserList users={festivalDetails!.users} />
           <BandList bands={festivalDetails!.bands} />

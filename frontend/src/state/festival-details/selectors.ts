@@ -31,3 +31,8 @@ export const selectUserFollowStatus = (user_id: string) =>
   createSelector(selectFestivalDetails, (state) =>
     state?.users.find((entry) => entry.user_id === user_id)
   );
+
+export const selectRelevantUsers = createSelector(
+  selectFestivalDetails,
+  (state) => state?.users.map(({ user_id }) => user_id)
+);

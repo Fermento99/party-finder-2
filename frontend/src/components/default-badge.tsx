@@ -1,8 +1,8 @@
-import { Badge, BadgeProps } from '@mui/material';
+import { Badge, BadgeProps, Palette, PaletteColor } from '@mui/material';
 
 interface CustomBadgeProps {
   tooltip?: string;
-  bgColor?: string;
+  bgColor: keyof Palette;
 }
 
 export const DefaultBadge = ({
@@ -13,10 +13,12 @@ export const DefaultBadge = ({
   <Badge
     {...props}
     overlap='circular'
-    invisible={false}
-    sx={{ 'MuiBadge-badge': { backgroundColor: bgColor } }}
+    sx={(theme) => ({
+      '.MuiBadge-badge': {
+        backgroundColor: (theme.palette[bgColor] as PaletteColor).main,
+      },
+    })}
     anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-    variant='dot'
     slotProps={{
       badge: () => ({
         title: tooltip,

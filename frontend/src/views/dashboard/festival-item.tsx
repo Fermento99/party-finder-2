@@ -1,5 +1,6 @@
 import {
   AvatarGroup,
+  Box,
   ListItem,
   ListItemText,
   Stack,
@@ -25,13 +26,14 @@ export const FestivalItem = ({
     <ListItem onClick={() => navigate(`/home/festival/${id}`)}>
       <ListItemText
         primary={name}
+        slotProps={{ primary: { variant: 'h1', fontSize: 20 } }}
         secondary={
           <Stack direction='row' sx={{ justifyContent: 'space-between' }}>
             <Stack>
-              <Typography>
+              <Typography variant='body2'>
                 {start_date} - {end_date}
               </Typography>
-              <Typography>{place}</Typography>
+              <Typography variant='body2'>{place}</Typography>
             </Stack>
             <UserList users={users} />
           </Stack>
@@ -46,14 +48,17 @@ interface UserListProps {
 }
 
 const UserList = ({ users }: UserListProps) => (
-  <AvatarGroup max={3}>
-    {users.toSorted(sortUsersByStatus).map((userEntry) => (
-      <DefaultBadge
-        color={getStatusColor(userEntry.user_status)}
-        tooltip={userEntry.user_status_display}
-      >
-        <UserAvatar spotify_id={userEntry.user_id} />
-      </DefaultBadge>
-    ))}
-  </AvatarGroup>
+  <Box sx={{ width: 110 }}>
+    <AvatarGroup max={3}>
+      {users.toSorted(sortUsersByStatus).map((userEntry) => (
+        <DefaultBadge
+          bgColor={getStatusColor(userEntry.user_status)}
+          tooltip={userEntry.user_status_display}
+          badgeContent={userEntry.user_status}
+        >
+          <UserAvatar spotify_id={userEntry.user_id} />
+        </DefaultBadge>
+      ))}
+    </AvatarGroup>
+  </Box>
 );
