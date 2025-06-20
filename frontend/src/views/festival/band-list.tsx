@@ -77,40 +77,60 @@ const BandItem = ({ band, onSelect }: BandItemProps) => {
 
   return (
     <>
-      <ListItem sx={{ justifyContent: 'space-between' }}>
+      <ListItem alignItems='center'>
         <Stack
-          direction='row'
-          sx={{ width: '70%', maxWidth: 'calc(100% - 190px)' }}
+          spacing={2}
+          sx={{ width: '100%' }}
+          direction={{ xs: 'column', sm: 'column', md: 'row' }}
+          alignItems='center'
+          justifyContent='space-between'
         >
-          <ListItemAvatar>
-            <Avatar
-              variant='square'
-              sx={{ width: 160, height: 160, mr: 2 }}
-              src={band.details.images.find(({ width }) => width === 160)?.url}
-              alt={band.details.name}
-              onClick={(event) => {
-                event.stopPropagation();
-                navigate(`/home/band/${band.spotify_id}`);
+          <Stack
+            flexGrow={1}
+            direction={{ xs: 'column', sm: 'column', md: 'row' }}
+            spacing={2}
+            alignItems='center'
+          >
+            <ListItemAvatar>
+              <Avatar
+                variant='square'
+                sx={{ width: 160, height: 160 }}
+                src={
+                  band.details.images.find(({ width }) => width === 160)?.url
+                }
+                alt={band.details.name}
+                onClick={(event) => {
+                  event.stopPropagation();
+                  navigate(`/home/band/${band.spotify_id}`);
+                }}
+              />
+            </ListItemAvatar>
+            <ListItemText
+              primary={band.details.name}
+              slotProps={{
+                primary: {
+                  variant: 'h3',
+                  textAlign: { xs: 'center', sm: 'center', md: 'start' },
+                },
+                secondary: {
+                  textAlign: { xs: 'center', sm: 'center', md: 'start' },
+                },
               }}
+              secondary={
+                <Stack>
+                  <Typography variant='body2'>
+                    {formatFolowersNumber(band.details.followers)} followers
+                  </Typography>
+                  <Typography variant='body2'>
+                    genres: {band.details.genres}
+                  </Typography>
+                </Stack>
+              }
             />
-          </ListItemAvatar>
-          <ListItemText
-            primary={band.details.name}
-            slotProps={{ primary: { variant: 'h3' } }}
-            secondary={
-              <Stack>
-                <Typography variant='body2'>
-                  {formatFolowersNumber(band.details.followers)} followers
-                </Typography>
-                <Typography variant='body2'>
-                  genres: {band.details.genres}
-                </Typography>
-              </Stack>
-            }
-          />
+          </Stack>
+          <VotesList votes={band.votes} />
+          <Button onClick={onSelect}>Vote</Button>
         </Stack>
-        <VotesList votes={band.votes} />
-        <Button onClick={onSelect}>Vote</Button>
       </ListItem>
       <Divider />
     </>

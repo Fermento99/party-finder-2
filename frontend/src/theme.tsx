@@ -43,7 +43,7 @@ export const theme = createTheme({
     secondary: {
       main: '#005D8F',
     },
-    voteOneColor: { main: '#7453A2' },
+    voteOneColor: { main: '#7e5dac' },
     voteTwoColor: { main: '#1982c4' },
     voteThreeColor: { main: '#8ac926' },
     voteFourColor: { main: '#ffca3a' },
@@ -66,11 +66,10 @@ export const theme = createTheme({
 
   components: {
     MuiButton: {
-      defaultProps: {},
+      defaultProps: { disableElevation: true },
       styleOverrides: {
         root: {
           textTransform: 'none',
-          disableElevation: true,
         },
       },
     },

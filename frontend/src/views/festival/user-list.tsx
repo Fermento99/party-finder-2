@@ -5,11 +5,14 @@ import {
   ListItem,
   ListItemAvatar,
   ListItemText,
+  Menu,
+  MenuItem,
   Stack,
   Typography,
 } from '@mui/material';
 import { USER_STATUSES_MAP, UserEntry, UserStatusValue } from 'api/models';
 import { UserAvatar } from 'components/user-avatar';
+import { useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   actionFollowFestival,
@@ -63,34 +66,63 @@ const UserItem = ({
 );
 
 const FollowActions = () => {
+  const [isMenuOpen, setMenuOpen] = useState(false);
+  const menuButtonRef = useRef(null);
   const dispatch = useDispatch();
   const { nickname, spotify_id } = useSelector(selectCurrentUserIdAndNickname);
   const festivalDetails = useSelector(selectFestivalDetails);
   const userFollowStatus = useSelector(selectUserFollowStatus(spotify_id!));
 
+  const openMenu = () => {
+    setMenuOpen(true);
+  };
+
+  const closeMenu = () => {
+    setMenuOpen(false);
+  };
+
   return (
     <Stack direction='row' spacing={1}>
-      {Object.entries(USER_STATUSES_MAP).map(([key, value]) => (
-        <Button
-          color={getStatusColor(key as UserStatusValue)}
-          variant={
-            userFollowStatus?.user_status === key ? 'contained' : 'outlined'
-          }
-          onClick={() =>
-            dispatch(
-              actionFollowFestival({
-                festival_id: festivalDetails!.id,
-                user_id: spotify_id!,
-                user_nickname: nickname!,
-                user_status: key as UserStatusValue,
-                user_status_display: value,
-              })
-            )
-          }
-        >
-          {value}
-        </Button>
-      ))}
+      <Button
+        sx={{ textTransform: 'capitalize' }}
+        ref={menuButtonRef}
+        variant={userFollowStatus?.user_status ? 'contained' : 'outlined'}
+        color={
+          userFollowStatus?.user_status
+            ? getStatusColor(userFollowStatus?.user_status)
+            : 'secondary'
+        }
+        onClick={openMenu}
+      >
+        {userFollowStatus?.user_status
+          ? USER_STATUSES_MAP[userFollowStatus.user_status]
+          : 'Choose Follow Status'}
+      </Button>
+      <Menu
+        open={isMenuOpen}
+        onClose={closeMenu}
+        anchorEl={menuButtonRef.current}
+      >
+        {Object.entries(USER_STATUSES_MAP).map(([key, value]) => (
+          <MenuItem
+            sx={{ textTransform: 'capitalize' }}
+            onClick={() => {
+              dispatch(
+                actionFollowFestival({
+                  festival_id: festivalDetails!.id,
+                  user_id: spotify_id!,
+                  user_nickname: nickname!,
+                  user_status: key as UserStatusValue,
+                  user_status_display: value,
+                })
+              );
+              closeMenu();
+            }}
+          >
+            {value}
+          </MenuItem>
+        ))}
+      </Menu>
       <Button
         color='error'
         variant='outlined'

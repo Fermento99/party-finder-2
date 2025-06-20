@@ -1,5 +1,6 @@
-import { Button, Stack } from '@mui/material';
+import { Button, Menu, MenuItem, Stack } from '@mui/material';
 import { VOTES_MAP, VoteValue } from 'api/models';
+import { useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { actionUnvote, actionVote } from 'state/festival-details/actions';
 import { selectUsersBandVote } from 'state/festival-details/selectors';
@@ -12,38 +13,59 @@ interface VoteActionsProps {
 }
 
 export const VoteActions = ({ band_id }: VoteActionsProps) => {
+  const [isMenuOpen, setMenuOpen] = useState(false);
+  const menuButtonRef = useRef(null);
   const dispatch = useDispatch();
   const { spotify_id, nickname } = useSelector(selectCurrentUserIdAndNickname);
   const userVote = useSelector(selectUsersBandVote(band_id, spotify_id!));
 
+  const openMenu = () => {
+    setMenuOpen(true);
+  };
+
+  const closeMenu = () => {
+    setMenuOpen(false);
+  };
+
   return (
     <Stack direction='row' spacing={1}>
-      {Object.entries(VOTES_MAP).map(([key, value]) => (
-        <Button
-          sx={{ maxWidth: '16.6%' }}
-          size='small'
-          variant={
-            userVote && userVote === (key as VoteValue)
-              ? 'contained'
-              : 'outlined'
-          }
-          color={getVoteColor(key as VoteValue)}
-          key={key}
-          onClick={() =>
-            dispatch(
-              actionVote({
-                band_id,
-                vote: key as VoteValue,
-                vote_display: VOTES_MAP[key as VoteValue],
-                user_id: spotify_id!,
-                user_nickname: nickname!,
-              })
-            )
-          }
-        >
-          {key}: {value}
-        </Button>
-      ))}
+      <Button
+        disableElevation
+        sx={{ textTransform: 'capitalize' }}
+        variant={userVote ? 'contained' : 'outlined'}
+        color={userVote ? getVoteColor(userVote) : 'secondary'}
+        onClick={openMenu}
+        ref={menuButtonRef}
+      >
+        {userVote ? VOTES_MAP[userVote] : 'Select Your Vote'}
+      </Button>
+      <Menu
+        open={isMenuOpen}
+        onClose={closeMenu}
+        anchorEl={menuButtonRef.current}
+      >
+        {Object.entries(VOTES_MAP).map(([key, value]) => (
+          <MenuItem
+            key={key}
+            sx={{ textTransform: 'capitalize' }}
+            color={getVoteColor(key as VoteValue)}
+            onClick={() => {
+              dispatch(
+                actionVote({
+                  band_id,
+                  vote: key as VoteValue,
+                  vote_display: VOTES_MAP[key as VoteValue],
+                  user_id: spotify_id!,
+                  user_nickname: nickname!,
+                })
+              );
+              closeMenu();
+            }}
+          >
+            {key}: {value}
+          </MenuItem>
+        ))}
+      </Menu>
       <Button
         variant='outlined'
         color='error'

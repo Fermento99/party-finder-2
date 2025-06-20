@@ -49,7 +49,11 @@ export const VoteList = ({ band_id }: VoteListProps) => {
             })}
           >
             <Cell>
-              <Typography>{VOTES_MAP[key as VoteValue]}</Typography>
+              <Typography
+                color={`${getVoteColor(key as VoteValue)}.contrastText`}
+              >
+                {VOTES_MAP[key as VoteValue]}
+              </Typography>
             </Cell>
             <Cell>
               <Stack useFlexGap direction='row' flexWrap='wrap' spacing={1}>
