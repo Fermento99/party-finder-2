@@ -8,6 +8,7 @@ import {
   Stack,
 } from '@mui/material';
 import HomeFilledIcon from '@mui/icons-material/HomeFilled';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { UserAvatar } from 'components/user-avatar';
 import { useEffect, useState, MouseEvent } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -58,6 +59,9 @@ export const HomeLayout = () => {
           justifyContent='space-between'
         >
           <Stack direction='row'>
+            <IconButton onClick={() => navigate(-1)}>
+              <ArrowBackIcon />
+            </IconButton>
             <IconButton onClick={() => navigate('/home')}>
               <HomeFilledIcon />
             </IconButton>
