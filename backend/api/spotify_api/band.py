@@ -40,9 +40,9 @@ def get_bands_details(band_ids: list[str], access_token):
     
     groups = []
     i = 0
-    
+
     while (i+1)*50 < len(band_ids):
-        groups.append(_get_50_bands_details(band_ids[i*50:(i+1)*50], access_token))
+        groups.extend(_get_50_bands_details(band_ids[i*50:(i+1)*50], access_token))
         i += 1
     groups.extend(_get_50_bands_details(band_ids[i*50:], access_token))
 
