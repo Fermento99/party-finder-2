@@ -14,13 +14,16 @@ import { format } from 'd3-format';
 import { Band, Vote } from 'api/models';
 import { useNavigate } from 'react-router';
 import { UserAvatar } from 'components/user-avatar';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { VoteModal } from 'components/vote-modal';
 import { filterRelevantVotes, sortVotes } from 'utils/array-utils';
 import { useSelector } from 'react-redux';
 import { selectRelevantUsers } from 'state/festival-details/selectors';
 import { DefaultBadge } from 'components/default-badge';
 import { getVoteColor } from 'utils/color-getters';
+import { SortList } from 'components/sort-list';
+import { selectBandSort } from 'state/sort-slice/selectors';
+import { getBandSort } from 'utils/sorting/band-sorting';
 
 interface BandListPorps {
   bands: Band[];
@@ -34,18 +37,34 @@ interface SelectionState {
 export const BandList = ({ bands }: BandListPorps) => {
   const [isVoteModalVisible, setVoteModalVisible] = useState<boolean>(false);
   const [selectedBand, selectBand] = useState<SelectionState>();
+  const bandSort = useSelector(selectBandSort);
 
   const handleSelection = (payload: SelectionState) => {
     selectBand(payload);
     setVoteModalVisible(true);
   };
 
+  const sortedBands = useMemo(() => {
+    let sortedBands = [...bands];
+
+    [...bandSort].reverse().forEach((entry) => {
+      sortedBands = sortedBands.toSorted(
+        getBandSort(entry.key, entry.value === 'Desc')
+      );
+    });
+
+    return sortedBands;
+  }, [bands, bandSort]);
+
   return (
     <Stack>
-      <Typography variant='h2'>Band List:</Typography>
+      <Stack direction='row' justifyContent='space-between' alignItems='center'>
+        <Typography variant='h2'>Band List:</Typography>
+        <SortList />
+      </Stack>
       <List>
         <Divider />
-        {bands.map((band) => (
+        {sortedBands.map((band) => (
           <BandItem
             key={band.spotify_id}
             band={band}
@@ -65,7 +84,8 @@ export const BandList = ({ bands }: BandListPorps) => {
   );
 };
 
-const formatFolowersNumber = format('.3s');
+const formatFolowersNumber = (count: number) =>
+  count < 100 ? count : format('.3s')(count);
 
 interface BandItemProps {
   band: Band;

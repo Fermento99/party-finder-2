@@ -5,11 +5,13 @@ import { festivalListReducer } from './festival-list/reducer';
 import { festivalDetailsReducer } from './festival-details/reducer';
 import { festivalDatailsMiddleware } from './festival-details/middleware';
 import { festivalListMiddleware } from './festival-list/middleware';
+import { sortReducer } from './sort-slice/reducer';
 
 const rootReducer = combineReducers({
   festivalList: festivalListReducer,
   fetsivalDetails: festivalDetailsReducer,
   user: userReducer,
+  sort: sortReducer,
 });
 
 export const store = configureStore({
