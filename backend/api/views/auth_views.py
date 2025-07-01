@@ -41,7 +41,7 @@ class SpotifyApiAuthenticator:
 
         user_data = get_current_user(access_token=token_data['access_token'])
         if not User.objects.filter(spotify_id=user_data['spotify_id']).exists():
-            new_user = User(spotify_id=user_data['spotify_id'], nickname=user_data['display_name'])
+            new_user = User(spotify_id=user_data['spotify_id'], nickname=user_data['details']['display_name'])
             new_user.save()
 
         res = redirect('/home')

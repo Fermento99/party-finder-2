@@ -62,7 +62,7 @@ def add_list(request: HttpRequest):
                 print('got the id, but could not add "{}" to database'.format(bandname))
                 return JsonResponse({ 'error': 'failed to add band "{}"'.format(bandname) }, status=500)
         else:
-            return JsonResponse({ 'error': 'failed to automatically add band "{}"'.format(bandname), 'message': 'see suggestions band ycould you mean and add it amnually', 'suggestions': id }, status=207)
+            return JsonResponse({ 'error': 'failed to automatically add band "{}"'.format(bandname), 'message': 'see suggestions band ycould you mean and add it manually', 'suggestions': id }, status=207)
     else:
         for bandname in band_names:
             id = get_band_by_name(bandname, request.COOKIES['access_token'])
