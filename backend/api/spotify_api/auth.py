@@ -1,18 +1,19 @@
 import urllib.parse, random
 import requests
+import os
 from requests.auth import HTTPBasicAuth
-from dotenv import dotenv_values
+from dotenv import load_dotenv
 
 
-CONFIG = dotenv_values(".env")
+load_dotenv(".env")
 
 def get_login_link():
     url = 'https://accounts.spotify.com/authorize?'
     state = _random_string(16)
     params = {
         'response_type': 'code',
-        'client_id': CONFIG['CLIENT_ID'],
-        'redirect_uri': CONFIG['REDIRECT_URI'],
+        'client_id': os.environ.get('CLIENT_ID'),
+        'redirect_uri': os.environ.get('REDIRECT_URI'),
         'state': state,
     }
 
@@ -26,7 +27,7 @@ def get_access_token(code=None, refresh_token=None):
         params = {
             'grant_type': 'authorization_code',
             'code': code,
-            'redirect_uri': CONFIG['REDIRECT_URI'],
+            'redirect_uri': os.environ.get('REDIRECT_URI'),
         }
     elif refresh_token:
         params = {
@@ -36,13 +37,13 @@ def get_access_token(code=None, refresh_token=None):
     else:
         raise Exception('No "code" nor "refresh_token" provided')
     
-    auth = HTTPBasicAuth(CONFIG['CLIENT_ID'], CONFIG['CLIENT_SECRET'])
+    auth = HTTPBasicAuth(os.environ.get('CLIENT_ID'), os.environ.get('CLIENT_SECRET'))
     headers = {
         'content-type': 'application/x-www-form-urlencoded',
     }
 
     res = requests.post(url, params=urllib.parse.urlencode(params), headers=headers, auth=auth)
-    
+
     return _serialize_tokens(res.json())
 
 def _serialize_tokens(data: dict):

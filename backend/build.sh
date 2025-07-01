@@ -10,7 +10,3 @@ python manage.py collectstatic --no-input
 
 # Apply any outstanding database migrations
 python manage.py migrate
-
-cd ../frontend
-npm i
-npm run build
