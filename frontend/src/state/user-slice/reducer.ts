@@ -8,6 +8,8 @@ import {
   actionFetchCurrentUser,
   actionUserLogout,
   actionUserDidLogout,
+  actionLoadCurrentUserFailed,
+  actionLoadUserListFailed,
 } from './actions';
 
 interface UserState {
@@ -33,12 +35,18 @@ export const userReducer = createReducer(initialUserState, (builder) =>
       state.loading = 'successful';
       state.users = payload;
     })
+    .addCase(actionLoadUserListFailed, (state) => {
+      state.loading = 'failed';
+    })
     .addCase(actionFetchCurrentUser, (state) => {
       state.isUserLoggingIn = 'pending';
     })
     .addCase(actionLoadCurrentUser, (state, { payload }) => {
       state.isUserLoggingIn = 'successful';
       state.loggedUser = payload;
+    })
+    .addCase(actionLoadCurrentUserFailed, (state) => {
+      state.isUserLoggingIn = 'failed';
     })
     .addCase(actionUserLogout, (state) => {
       state.isUserLoggingIn = 'pending';
