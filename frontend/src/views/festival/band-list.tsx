@@ -10,7 +10,6 @@ import {
   Stack,
   Typography,
 } from '@mui/material';
-import { format } from 'd3-format';
 import { Band, Vote } from 'api/models';
 import { useNavigate } from 'react-router';
 import { UserAvatar } from 'components/user-avatar';
@@ -18,12 +17,15 @@ import { useMemo, useState } from 'react';
 import { VoteModal } from 'components/vote-modal';
 import { filterRelevantVotes, sortVotes } from 'utils/array-utils';
 import { useSelector } from 'react-redux';
-import { selectRelevantUsers } from 'state/festival-details/selectors';
+import { selectRelevantUserIds } from 'state/festival-details/selectors';
 import { DefaultBadge } from 'components/default-badge';
 import { getVoteColor } from 'utils/color-getters';
 import { SortList } from 'components/sort-list';
-import { selectBandSort } from 'state/sort-slice/selectors';
-import { getBandSort } from 'utils/sorting/band-sorting';
+import { selectBandFilter, selectBandSort } from 'state/sort-slice/selectors';
+import { sortBands } from 'utils/sorting/band-sorting';
+import { FilterList } from 'components/filter-list';
+import { filterBands } from 'utils/sorting/band-filtering';
+import { formatFolowersNumber } from 'utils/formating';
 
 interface BandListPorps {
   bands: Band[];
@@ -37,6 +39,8 @@ interface SelectionState {
 export const BandList = ({ bands }: BandListPorps) => {
   const [isVoteModalVisible, setVoteModalVisible] = useState<boolean>(false);
   const [selectedBand, selectBand] = useState<SelectionState>();
+  const relevantUserIds = useSelector(selectRelevantUserIds);
+  const bandFilter = useSelector(selectBandFilter);
   const bandSort = useSelector(selectBandSort);
 
   const handleSelection = (payload: SelectionState) => {
@@ -45,22 +49,29 @@ export const BandList = ({ bands }: BandListPorps) => {
   };
 
   const sortedBands = useMemo(() => {
-    let sortedBands = [...bands];
+    let tempBands = bands.map((band) => ({
+      ...band,
+      votes: band.votes.filter(({ user_id }) =>
+        relevantUserIds?.includes(user_id)
+      ),
+    }));
 
-    [...bandSort].reverse().forEach((entry) => {
-      sortedBands = sortedBands.toSorted(
-        getBandSort(entry.key, entry.value === 'Desc')
-      );
-    });
+    tempBands = filterBands(tempBands, bandFilter);
 
-    return sortedBands;
-  }, [bands, bandSort]);
+    return sortBands(tempBands, bandSort);
+  }, [bands, bandSort, bandFilter]);
 
   return (
     <Stack>
       <Stack direction='row' justifyContent='space-between' alignItems='center'>
         <Typography variant='h2'>Band List:</Typography>
-        <SortList />
+        <Stack direction='row' spacing={1} alignItems='center'>
+          <FilterList />
+          <SortList />
+          <Typography color='text.secondary'>
+            Items: {sortedBands.length}
+          </Typography>
+        </Stack>
       </Stack>
       <List>
         <Divider />
@@ -83,9 +94,6 @@ export const BandList = ({ bands }: BandListPorps) => {
     </Stack>
   );
 };
-
-const formatFolowersNumber = (count: number) =>
-  count < 100 ? count : format('.3s')(count);
 
 interface BandItemProps {
   band: Band;
@@ -162,13 +170,13 @@ interface VotersListProps {
 }
 
 const VotesList = ({ votes }: VotersListProps) => {
-  const relevantUsers = useSelector(selectRelevantUsers);
+  const relevantUserIds = useSelector(selectRelevantUserIds);
 
   return (
     <Stack sx={{ width: 110, alignItems: 'center' }}>
       <AvatarGroup max={3}>
         {votes
-          .filter(filterRelevantVotes(relevantUsers))
+          .filter(filterRelevantVotes(relevantUserIds))
           .sort(sortVotes)
           .map((vote) => (
             <DefaultBadge

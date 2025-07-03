@@ -13,7 +13,7 @@ export type BandSortValue = (typeof SORT_VALUES)[number];
 export type BandSort = {
   key: BandSortKeyType;
   value: BandSortValue;
-}[];
+};
 
 const avgVote = (votes: Vote[]) => {
   if (votes.length === 0) return 6;
@@ -27,14 +27,14 @@ const avgVote = (votes: Vote[]) => {
   return sum / count;
 };
 
-const sortBandsByFollowers = (a: Band, b: Band) =>
-  a.details.followers - b.details.followers;
+const sortBandsByFollowers = (a: Band, b: Band, modifier: number) =>
+  (a.details.followers - b.details.followers) * modifier;
 
-const sortBandsByAvgVote = (a: Band, b: Band) =>
-  avgVote(b.votes) - avgVote(a.votes);
+const sortBandsByAvgVote = (a: Band, b: Band, modifier: number) =>
+  (avgVote(b.votes) - avgVote(a.votes)) * modifier;
 
-const sortBandsByVoteCount = (a: Band, b: Band) =>
-  a.votes.length - b.votes.length;
+const sortBandsByVoteCount = (a: Band, b: Band, modifier: number) =>
+  (a.votes.length - b.votes.length) * modifier;
 
 const getSortComparator = (key: BandSortKeyType) => {
   switch (key) {
@@ -47,8 +47,14 @@ const getSortComparator = (key: BandSortKeyType) => {
   }
 };
 
-export const getBandSort = (key: BandSortKeyType, reverse: boolean) => {
-  const comparator = getSortComparator(key);
-  if (reverse) return (a: Band, b: Band) => comparator(b, a);
-  return comparator;
+export const sortBands = (bands: Band[], sorts: BandSort[]) => {
+  const compositeSort = sorts.reduce(
+    (composite, sort) => (a: Band, b: Band) =>
+      composite(a, b) !== 0
+        ? composite(a, b)
+        : getSortComparator(sort.key)(a, b, sort.value === 'Desc' ? -1 : 1),
+    (_: Band, __: Band) => 0
+  );
+
+  return bands.sort(compositeSort);
 };

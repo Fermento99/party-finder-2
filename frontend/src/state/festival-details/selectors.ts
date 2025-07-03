@@ -13,6 +13,11 @@ export const selectFestivalDetailsLoadingStatus = createSelector(
   (state) => state.loadingStatus
 );
 
+export const selectFestivalBands = createSelector(
+  selectFestivalState,
+  (state) => state.details?.bands
+);
+
 export const selectBandVotes = (band_id: string) =>
   createSelector(
     selectFestivalDetails,
@@ -32,7 +37,12 @@ export const selectUserFollowStatus = (user_id: string) =>
     state?.users.find((entry) => entry.user_id === user_id)
   );
 
-export const selectRelevantUsers = createSelector(
+export const selectRelevantUserIds = createSelector(
   selectFestivalDetails,
   (state) => state?.users.map(({ user_id }) => user_id)
+);
+
+export const selectRelevantUsers = createSelector(
+  selectFestivalDetails,
+  (state) => state?.users
 );

@@ -1,11 +1,11 @@
-import { Button, Menu, MenuItem, Stack } from '@mui/material';
+import { Button, MenuItem, Stack } from '@mui/material';
 import { VOTES_MAP, VoteValue } from 'api/models';
-import { useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { actionUnvote, actionVote } from 'state/festival-details/actions';
 import { selectUsersBandVote } from 'state/festival-details/selectors';
 import { selectCurrentUserIdAndNickname } from 'state/user-slice/selectors';
 import { getVoteColor } from 'utils/color-getters';
+import { ButtonMenu } from './button-menu';
 
 interface VoteActionsProps {
   band_id: string;
@@ -13,36 +13,20 @@ interface VoteActionsProps {
 }
 
 export const VoteActions = ({ band_id }: VoteActionsProps) => {
-  const [isMenuOpen, setMenuOpen] = useState(false);
-  const menuButtonRef = useRef(null);
   const dispatch = useDispatch();
   const { spotify_id, nickname } = useSelector(selectCurrentUserIdAndNickname);
   const userVote = useSelector(selectUsersBandVote(band_id, spotify_id!));
 
-  const openMenu = () => {
-    setMenuOpen(true);
-  };
-
-  const closeMenu = () => {
-    setMenuOpen(false);
-  };
-
   return (
     <Stack direction='row' spacing={1}>
-      <Button
-        disableElevation
-        sx={{ textTransform: 'capitalize' }}
-        variant={userVote ? 'contained' : 'outlined'}
-        color={userVote ? getVoteColor(userVote) : 'secondary'}
-        onClick={openMenu}
-        ref={menuButtonRef}
-      >
-        {userVote ? VOTES_MAP[userVote] : 'Select Your Vote'}
-      </Button>
-      <Menu
-        open={isMenuOpen}
-        onClose={closeMenu}
-        anchorEl={menuButtonRef.current}
+      <ButtonMenu
+        buttonLabel={userVote ? VOTES_MAP[userVote] : 'Select Your Vote'}
+        buttonProps={{
+          disableElevation: true,
+          sx: { textTransform: 'capitalize' },
+          variant: userVote ? 'contained' : 'outlined',
+          color: userVote ? getVoteColor(userVote) : 'secondary',
+        }}
       >
         {Object.entries(VOTES_MAP).map(([key, value]) => (
           <MenuItem
@@ -59,13 +43,12 @@ export const VoteActions = ({ band_id }: VoteActionsProps) => {
                   user_nickname: nickname!,
                 })
               );
-              closeMenu();
             }}
           >
             {key}: {value}
           </MenuItem>
         ))}
-      </Menu>
+      </ButtonMenu>
       <Button
         variant='outlined'
         color='error'
