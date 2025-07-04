@@ -21,7 +21,11 @@ import { selectRelevantUserIds } from 'state/festival-details/selectors';
 import { DefaultBadge } from 'components/default-badge';
 import { getVoteColor } from 'utils/color-getters';
 import { SortList } from 'components/sort-list';
-import { selectBandFilter, selectBandSort } from 'state/sort-slice/selectors';
+import {
+  selectBandFilter,
+  selectBandFilterUserVotes,
+  selectBandSort,
+} from 'state/sort-slice/selectors';
 import { sortBands } from 'utils/sorting/band-sorting';
 import { FilterList } from 'components/filter-list';
 import { filterBands } from 'utils/sorting/band-filtering';
@@ -171,12 +175,18 @@ interface VotersListProps {
 
 const VotesList = ({ votes }: VotersListProps) => {
   const relevantUserIds = useSelector(selectRelevantUserIds);
+  const userVotesFilter = useSelector(selectBandFilterUserVotes);
 
   return (
     <Stack sx={{ width: 110, alignItems: 'center' }}>
       <AvatarGroup max={3}>
         {votes
-          .filter(filterRelevantVotes(relevantUserIds))
+          .filter(
+            (vote) =>
+              filterRelevantVotes(relevantUserIds)(vote) &&
+              (userVotesFilter.length === 0 ||
+                userVotesFilter.includes(vote.user_id))
+          )
           .sort(sortVotes)
           .map((vote) => (
             <DefaultBadge
