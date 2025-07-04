@@ -4,11 +4,11 @@ export type RangeFilterValue = [number, number];
 
 type BandFilterValue = string | RangeFilterValue | string[];
 
-export const BAND_FILTER_KEY_NAME_MAP = <Record<BandFilterKeyType, string>>{
+export const BAND_FILTER_KEY_NAME_MAP = {
   search: 'Search',
   followers: 'Followers',
   userVotes: 'User Votes',
-};
+} as Record<BandFilterKeyType, string>;
 
 export type BandFilter = {
   search: string;
@@ -26,7 +26,9 @@ const filterFollowerRange = (band: Band, range: BandFilterValue) =>
   band.details.followers <= (range as RangeFilterValue)[1];
 
 const filterSearch = (band: Band, value: BandFilterValue) =>
-  !!band.details.name.match(value as string);
+  !!band.details.name
+    .toLocaleLowerCase()
+    .match((value as string).toLocaleLowerCase());
 
 const getFilter = (key: BandFilterKeyType) => {
   switch (key) {

@@ -63,7 +63,7 @@ export const BandList = ({ bands }: BandListPorps) => {
     tempBands = filterBands(tempBands, bandFilter);
 
     return sortBands(tempBands, bandSort);
-  }, [bands, bandSort, bandFilter]);
+  }, [bands, bandSort, bandFilter, relevantUserIds]);
 
   return (
     <Stack>

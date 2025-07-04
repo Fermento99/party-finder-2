@@ -8,8 +8,9 @@ import {
 } from 'state/sort-slice/actions';
 import { selectBandFilterUserVotes } from 'state/sort-slice/selectors';
 import { SubmenuControls } from './submenu-controls';
+import { SubmenuOptionsProps } from './types';
 
-export const UserVotesSubmenu = () => {
+export const UserVotesSubmenu = ({ closeMenu }: SubmenuOptionsProps) => {
   const [selectedUsers, selectUsers] = useState<string[]>(
     useSelector(selectBandFilterUserVotes)
   );
@@ -18,11 +19,13 @@ export const UserVotesSubmenu = () => {
 
   const applyFilter = () => {
     dispatch(actionApplyFilterUserVotes(selectedUsers));
+    closeMenu();
   };
 
   const clearFilter = () => {
     selectUsers([]);
     dispatch(actionClearFilterUserVotes());
+    closeMenu();
   };
 
   const handleUserClick = (user_id: string) => {
@@ -37,8 +40,26 @@ export const UserVotesSubmenu = () => {
     }
   };
 
+  const handleSelectAll = () => {
+    if (selectedUsers.length < (relevantUsers?.length ?? 0)) {
+      selectUsers(relevantUsers?.map(({ user_id }) => user_id) ?? []);
+    } else {
+      selectUsers([]);
+    }
+  };
+
   return (
     <>
+      <MenuItem onClick={handleSelectAll}>
+        <Checkbox
+          indeterminate={
+            selectedUsers.length > 0 &&
+            selectedUsers.length < (relevantUsers?.length ?? 0)
+          }
+          checked={selectedUsers.length === relevantUsers?.length}
+        />
+        Select All
+      </MenuItem>
       {relevantUsers?.map((user) => (
         <MenuItem onClick={() => handleUserClick(user.user_id)}>
           <Checkbox checked={selectedUsers.indexOf(user.user_id) !== -1} />

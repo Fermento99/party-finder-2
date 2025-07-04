@@ -17,8 +17,10 @@ import { BAND_SORT_KEYS, BandSortKeyType } from 'utils/sorting/band-sorting';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import { ButtonMenu } from './button-menu';
+import { useMenuStateHook } from 'utils/hooks';
 
 export const SortList = () => {
+  const [isMenuOpen, openMenu, closeMenu] = useMenuStateHook();
   const dispatch = useDispatch();
   const bandSort = useSelector(selectBandSort);
 
@@ -38,6 +40,9 @@ export const SortList = () => {
 
   return (
     <ButtonMenu
+      isOpen={isMenuOpen}
+      openMenu={openMenu}
+      closeMenu={closeMenu}
       buttonLabel={
         <>
           Sort
@@ -46,7 +51,6 @@ export const SortList = () => {
           )}
         </>
       }
-      autohide={false}
     >
       {bandSort.map(({ key, value }) => (
         <MenuItem onClick={() => removeSort(key)}>

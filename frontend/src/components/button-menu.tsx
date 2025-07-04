@@ -1,30 +1,30 @@
 import { Button, ButtonProps, Menu, MenuItem } from '@mui/material';
-import { useRef, useState, ReactNode, RefObject } from 'react';
+import { useRef, ReactNode, RefObject, MouseEvent } from 'react';
 
 interface ButtonMenuProps {
   buttonLabel: ReactNode | string;
   children?: ReactNode | ReactNode[];
   buttonProps?: ButtonProps;
-  autohide?: boolean;
   submenu?: boolean;
+  isOpen: boolean;
+  openMenu: () => void;
+  closeMenu: () => void;
 }
 
 export const ButtonMenu = ({
   buttonLabel,
   children,
   buttonProps,
-  autohide = true,
+  isOpen,
+  openMenu,
+  closeMenu,
   submenu = false,
 }: ButtonMenuProps) => {
-  const [isMenuOpen, setMenuOpen] = useState(false);
   const menuButtonRef = useRef(null);
 
-  const openMenu = () => {
-    setMenuOpen(true);
-  };
-
-  const closeMenu = () => {
-    setMenuOpen(false);
+  const handleOpenMenu = (event: MouseEvent<HTMLElement>) => {
+    event.currentTarget.blur();
+    openMenu();
   };
 
   return (
@@ -32,17 +32,12 @@ export const ButtonMenu = ({
       <ButtonComponent
         submenu={submenu}
         ref={menuButtonRef}
-        openMenu={openMenu}
+        openMenu={handleOpenMenu}
         buttonProps={buttonProps}
       >
         {buttonLabel}
       </ButtonComponent>
-      <Menu
-        open={isMenuOpen}
-        onClose={closeMenu}
-        anchorEl={menuButtonRef.current}
-        onClick={autohide ? closeMenu : () => {}}
-      >
+      <Menu open={isOpen} onClose={closeMenu} anchorEl={menuButtonRef.current}>
         {children}
       </Menu>
     </>
@@ -54,7 +49,7 @@ interface ButtonComponentProps {
   buttonProps?: ButtonProps;
   children: ReactNode;
   ref: RefObject<null>;
-  openMenu: () => void;
+  openMenu: (event: MouseEvent<HTMLElement>) => void;
 }
 
 const ButtonComponent = ({

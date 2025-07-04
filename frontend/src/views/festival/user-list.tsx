@@ -24,6 +24,7 @@ import {
 import { selectCurrentUserIdAndNickname } from 'state/user-slice/selectors';
 import { sortUsersByStatus } from 'utils/sorting';
 import { getStatusColor } from 'utils/color-getters';
+import { useMenuStateHook } from 'utils/hooks';
 
 interface UserListProps {
   users: UserEntry[];
@@ -65,6 +66,7 @@ const UserItem = ({
 );
 
 const FollowActions = () => {
+  const [isMenuOpen, openMenu, closeMenu] = useMenuStateHook();
   const dispatch = useDispatch();
   const { nickname, spotify_id } = useSelector(selectCurrentUserIdAndNickname);
   const festivalDetails = useSelector(selectFestivalDetails);
@@ -73,6 +75,9 @@ const FollowActions = () => {
   return (
     <Stack direction='row' spacing={1}>
       <ButtonMenu
+        isOpen={isMenuOpen}
+        openMenu={openMenu}
+        closeMenu={closeMenu}
         buttonLabel={
           userFollowStatus?.user_status
             ? USER_STATUSES_MAP[userFollowStatus.user_status]

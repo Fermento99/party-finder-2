@@ -10,8 +10,9 @@ import { selectBandFilterFollowers } from 'state/sort-slice/selectors';
 import { RangeFilterValue } from 'utils/sorting/band-filtering';
 import { SubmenuControls } from './submenu-controls';
 import { formatFolowersNumber } from 'utils/formating';
+import { SubmenuOptionsProps } from './types';
 
-export const FollowersSubmenu = () => {
+export const FollowersSubmenu = ({ closeMenu }: SubmenuOptionsProps) => {
   const [followerRange, setFollowerRange] = useState<RangeFilterValue>(
     useSelector(selectBandFilterFollowers)
   );
@@ -33,11 +34,13 @@ export const FollowersSubmenu = () => {
 
   const applyFilter = () => {
     dispatch(actionApplyFilterFolowers(followerRange));
+    closeMenu();
   };
 
   const clearFilter = () => {
     setFollowerRange([0, Infinity]);
     dispatch(actionClearFilterFolowers());
+    closeMenu();
   };
 
   return (

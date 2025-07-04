@@ -17,19 +17,64 @@ import { selectBandFilter } from 'state/sort-slice/selectors';
 import { UserVotesSubmenu } from './user-vote-submenu';
 import { FollowersSubmenu } from './follower-submenu';
 import { SearchSubmenu } from './search-submenu';
+import { useMenuStateHook } from 'utils/hooks';
 
 const getOptions = (key: BandFilterKeyType) => {
   switch (key) {
     case 'userVotes':
-      return <UserVotesSubmenu />;
+      return UserVotesSubmenu;
     case 'followers':
-      return <FollowersSubmenu />;
+      return FollowersSubmenu;
     case 'search':
-      return <SearchSubmenu />;
+      return SearchSubmenu;
   }
 };
 
+interface SubmenuProps {
+  submenuType: BandFilterKeyType;
+  closeParent: () => void;
+}
+
+const Submenu = ({ submenuType, closeParent }: SubmenuProps) => {
+  const [isMenuOpen, openMenu, closeMenu] = useMenuStateHook();
+  const bandFilter = useSelector(selectBandFilter);
+
+  const OptionsComponent = getOptions(submenuType);
+
+  return (
+    <ButtonMenu
+      submenu
+      isOpen={isMenuOpen}
+      openMenu={openMenu}
+      closeMenu={closeMenu}
+      buttonLabel={
+        <Stack
+          direction='row'
+          alignItems='center'
+          justifyContent='space-between'
+          sx={{ width: '100%' }}
+        >
+          {BAND_FILTER_KEY_NAME_MAP[submenuType]}
+          {emptyValueChecker(submenuType, bandFilter[submenuType]) ? (
+            <CircleIcon fontSize='small' color='secondary' sx={{ ml: 2 }} />
+          ) : null}
+        </Stack>
+      }
+    >
+      {
+        <OptionsComponent
+          closeMenu={() => {
+            closeMenu();
+            closeParent();
+          }}
+        />
+      }
+    </ButtonMenu>
+  );
+};
+
 export const FilterList = () => {
+  const [isMenuOpen, openMenu, closeMenu] = useMenuStateHook();
   const bandFilter = useSelector(selectBandFilter);
   const dispatch = useDispatch();
 
@@ -39,12 +84,15 @@ export const FilterList = () => {
     dispatch(actionClearFilterFolowers());
     dispatch(actionClearFilterSearch());
     dispatch(actionClearFilterUserVotes());
+    closeMenu();
   };
 
   return (
     <>
       <ButtonMenu
-        autohide={false}
+        isOpen={isMenuOpen}
+        openMenu={openMenu}
+        closeMenu={closeMenu}
         buttonLabel={
           <>
             Filter
@@ -54,33 +102,12 @@ export const FilterList = () => {
           </>
         }
       >
-        {Object.keys(bandFilter).map((key) => (
-          <ButtonMenu
-            submenu
-            autohide={false}
-            buttonLabel={
-              <Stack
-                direction='row'
-                alignItems='center'
-                justifyContent='space-between'
-                sx={{ width: '100%' }}
-              >
-                {BAND_FILTER_KEY_NAME_MAP[key as BandFilterKeyType]}
-                {emptyValueChecker(
-                  key as BandFilterKeyType,
-                  bandFilter[key as BandFilterKeyType]
-                ) ? (
-                  <CircleIcon
-                    fontSize='small'
-                    color='secondary'
-                    sx={{ ml: 2 }}
-                  />
-                ) : null}
-              </Stack>
-            }
-          >
-            {getOptions(key as BandFilterKeyType)}
-          </ButtonMenu>
+        {Object.keys(bandFilter).map((submenuType) => (
+          <Submenu
+            submenuType={submenuType as BandFilterKeyType}
+            closeParent={closeMenu}
+            key={submenuType}
+          />
         ))}
         <Button
           variant='outlined'

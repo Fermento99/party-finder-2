@@ -6,6 +6,7 @@ import { selectUsersBandVote } from 'state/festival-details/selectors';
 import { selectCurrentUserIdAndNickname } from 'state/user-slice/selectors';
 import { getVoteColor } from 'utils/color-getters';
 import { ButtonMenu } from './button-menu';
+import { useMenuStateHook } from 'utils/hooks';
 
 interface VoteActionsProps {
   band_id: string;
@@ -13,6 +14,7 @@ interface VoteActionsProps {
 }
 
 export const VoteActions = ({ band_id }: VoteActionsProps) => {
+  const [isMenuOpen, openMenu, closeMenu] = useMenuStateHook();
   const dispatch = useDispatch();
   const { spotify_id, nickname } = useSelector(selectCurrentUserIdAndNickname);
   const userVote = useSelector(selectUsersBandVote(band_id, spotify_id!));
@@ -20,6 +22,9 @@ export const VoteActions = ({ band_id }: VoteActionsProps) => {
   return (
     <Stack direction='row' spacing={1}>
       <ButtonMenu
+        isOpen={isMenuOpen}
+        openMenu={openMenu}
+        closeMenu={closeMenu}
         buttonLabel={userVote ? VOTES_MAP[userVote] : 'Select Your Vote'}
         buttonProps={{
           disableElevation: true,
