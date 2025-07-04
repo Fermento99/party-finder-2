@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router';
 import { selectUserDetails } from 'state/user-slice/selectors';
 import { DefaultTooltip } from './default-tooltip';
 import { MouseEvent } from 'react';
+import { getImageSrc } from 'utils/images';
 
 interface UserAvatarProps {
   spotify_id?: string;
@@ -20,21 +21,14 @@ export const UserAvatar = ({
 
   const user = useSelector(selectUserDetails(spotify_id));
 
-  let src = spotify_id;
-  if (user) {
-    const image = user?.details.images.find(({ height }) => height === 64)?.url;
-    if (image) {
-      src = image;
-    } else {
-      src = user.nickname;
-    }
-  }
+  let src = getImageSrc(64, user?.details.images, user?.nickname);
 
   return (
     <DefaultTooltip title={tooltip ? user?.nickname ?? spotify_id : ''}>
       <Avatar
         alt={user?.nickname}
         src={src}
+        sx={{ '&.MuiAvatar-root': { border: 'none' } }}
         onClick={
           onClick
             ? onClick

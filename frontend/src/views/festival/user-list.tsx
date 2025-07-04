@@ -32,7 +32,9 @@ interface UserListProps {
 
 export const UserList = ({ users }: UserListProps) => (
   <Stack>
-    <Typography variant='h2'>User List:</Typography>
+    <Typography sx={{ mx: 2 }} variant='h2'>
+      User List:
+    </Typography>
     <List>
       <Divider />
       {users.toSorted(sortUsersByStatus).map((user) => (

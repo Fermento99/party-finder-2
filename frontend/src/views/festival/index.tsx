@@ -27,13 +27,13 @@ export const FestivalView = () => {
 
   return (
     <LoadingHandler loading={loadingStatus}>
-      <Stack>
+      <Stack sx={{ py: 2 }} spacing={2}>
         <Box>
           <Typography variant='h1'>{festivalDetails?.name}</Typography>
-          <Typography color='secondary' variant='body2'>
+          <Typography color='text.secondary' variant='body2'>
             {festivalDetails?.start_date} - {festivalDetails?.end_date}
           </Typography>
-          <Typography color='secondary' variant='body2'>
+          <Typography color='text.secondary' variant='body2'>
             {festivalDetails?.place}
           </Typography>
         </Box>
