@@ -8,6 +8,7 @@ import {
 } from 'state/festival-list/selectors';
 import { FestivalItem } from './festival-item';
 import { LoadingHandler } from 'components/loading-handler';
+import { sortFestivalsByStartDate } from 'utils/sorting';
 
 export const DashboardView = () => {
   const festivalList = useSelector(selectFestivalList);
@@ -23,7 +24,7 @@ export const DashboardView = () => {
       <Stack>
         <List>
           <Divider />
-          {festivalList?.map((festival) => (
+          {festivalList?.toSorted(sortFestivalsByStartDate).map((festival) => (
             <>
               <FestivalItem key={festival.id} festival={festival} />
               <Divider />

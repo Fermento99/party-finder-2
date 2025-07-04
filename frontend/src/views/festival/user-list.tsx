@@ -22,7 +22,7 @@ import {
   selectUserFollowStatus,
 } from 'state/festival-details/selectors';
 import { selectCurrentUserIdAndNickname } from 'state/user-slice/selectors';
-import { sortUsersByStatus } from 'utils/array-utils';
+import { sortUsersByStatus } from 'utils/sorting';
 import { getStatusColor } from 'utils/color-getters';
 
 interface UserListProps {

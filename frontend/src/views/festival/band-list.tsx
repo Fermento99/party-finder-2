@@ -15,7 +15,7 @@ import { useNavigate } from 'react-router';
 import { UserAvatar } from 'components/user-avatar';
 import { useMemo, useState } from 'react';
 import { VoteModal } from 'components/vote-modal';
-import { filterRelevantVotes, sortVotes } from 'utils/array-utils';
+import { filterRelevantVotes, sortVotes } from 'utils/sorting';
 import { useSelector } from 'react-redux';
 import { selectRelevantUserIds } from 'state/festival-details/selectors';
 import { DefaultBadge } from 'components/default-badge';

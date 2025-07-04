@@ -10,7 +10,7 @@ import { Festival, UserEntry } from 'api/models';
 import { DefaultBadge } from 'components/default-badge';
 import { UserAvatar } from 'components/user-avatar';
 import { useNavigate } from 'react-router';
-import { sortUsersByStatus } from 'utils/array-utils';
+import { sortUsersByStatus } from 'utils/sorting';
 import { getStatusColor } from 'utils/color-getters';
 
 interface FestivalItemProps {
