@@ -23,7 +23,18 @@ export const FestivalItem = ({
   const navigate = useNavigate();
 
   return (
-    <ListItem onClick={() => navigate(`/home/festival/${id}`)}>
+    <ListItem
+      sx={(theme) => ({
+        cursor: 'pointer',
+        transition: 'background-color .2s ease-out',
+        backgroundColor: theme.palette.festivalTileColor.main,
+
+        ':hover': {
+          backgroundColor: theme.palette.festivalTileColor.hover,
+        },
+      })}
+      onClick={() => navigate(`/home/festival/${id}`)}
+    >
       <ListItemText
         primary={name}
         slotProps={{ primary: { variant: 'h1', fontSize: 20 } }}

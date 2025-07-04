@@ -113,7 +113,7 @@ export const FilterList = () => {
           variant='outlined'
           color='secondary'
           onClick={clearAllFilters}
-          sx={{ mx: 2 }}
+          sx={{ mx: 2, my: 0.75 }}
         >
           Clear all filters
         </Button>

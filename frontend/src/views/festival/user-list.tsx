@@ -75,7 +75,7 @@ const FollowActions = () => {
   const userFollowStatus = useSelector(selectUserFollowStatus(spotify_id!));
 
   return (
-    <Stack direction='row' spacing={1}>
+    <Stack direction='row' spacing={1} sx={{ px: 2 }}>
       <ButtonMenu
         isOpen={isMenuOpen}
         openMenu={openMenu}

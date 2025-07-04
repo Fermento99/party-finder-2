@@ -47,6 +47,7 @@ export const FollowersSubmenu = ({ closeMenu }: SubmenuOptionsProps) => {
     <>
       <MenuItem disableRipple sx={{ px: 4, pt: 4, width: '300px' }}>
         <Slider
+          color='secondary'
           value={followerRange}
           max={maxRange[1]}
           min={maxRange[0]}

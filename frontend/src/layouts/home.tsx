@@ -3,6 +3,7 @@ import {
   Box,
   Divider,
   IconButton,
+  IconButtonProps,
   Menu,
   MenuItem,
   Stack,
@@ -22,6 +23,15 @@ import {
   selectCurrentUserDetails,
   selectCurrentUserLoadingStatus,
 } from 'state/user-slice/selectors';
+
+const NavButton = (props: IconButtonProps) => (
+  <IconButton
+    sx={(theme) => ({
+      color: theme.palette.primary.contrastText,
+    })}
+    {...props}
+  />
+);
 
 export const HomeLayout = () => {
   const [isOpen, setOpen] = useState(false);
@@ -59,12 +69,12 @@ export const HomeLayout = () => {
           justifyContent='space-between'
         >
           <Stack direction='row'>
-            <IconButton onClick={() => navigate(-1)}>
+            <NavButton onClick={() => navigate(-1)}>
               <ArrowBackIcon />
-            </IconButton>
-            <IconButton onClick={() => navigate('/home')}>
+            </NavButton>
+            <NavButton onClick={() => navigate('/home')}>
               <HomeFilledIcon />
-            </IconButton>
+            </NavButton>
           </Stack>
           <UserAvatar
             spotify_id={currentUser?.spotify_id}
